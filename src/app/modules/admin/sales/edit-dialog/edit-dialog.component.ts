@@ -105,11 +105,11 @@ export class EditDialogComponent implements OnInit {
 
         // console.log(this.data)
 
-        this.editForm.patchValue({
-            ...this.data
-        })
+        // this.editForm.patchValue({
+        //     ...this.data
+        // })
 
-        console.log(this.editForm.value)
+        console.log(this.data.data)
 
     }
 

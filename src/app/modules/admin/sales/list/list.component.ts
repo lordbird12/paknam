@@ -80,22 +80,12 @@ export class ListComponent implements OnInit, AfterViewInit {
 
     // เพิ่มเมธอด editElement(element) และ deleteElement(element)
     editElement(element: any) {
-        const dialogRef = this.dialog.open(EditDialogComponent, {
-            width: '500px', // กำหนดความกว้างของ Dialog
-            data: {
-                data: element,
-            }, // ส่งข้อมูลเริ่มต้นไปยัง Dialog
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                // เมื่อ Dialog ถูกปิด ดำเนินการตามผลลัพธ์ที่คุณได้รับจาก Dialog
-            }
-        });
+        this._router.navigate(['admin/sales/edit/' + element.id]);
     }
     addElement() {
-        this._router.navigate(['admin/permission/form']);
+        this._router.navigate(['admin/sales/form']);
     }
+
 
     pages = { current_page: 1, last_page: 1, per_page: 10, begin: 0 };
     loadTable(): void {

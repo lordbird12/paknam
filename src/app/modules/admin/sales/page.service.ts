@@ -48,7 +48,7 @@ export class PageService {
 
     create(data: FormData): Observable<any> {
         return this._httpClient
-            .post<any>(environment.baseURL + '/api/user', data)
+            .post<any>(environment.baseURL + '/api/orders', data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -71,6 +71,16 @@ export class PageService {
             environment.baseURL + '/api/employees/' + id,
             { headers: this.httpOptionsFormdata.headers }
         );
+    }
+
+    getById(id:any): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/orders/' + id)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
     }
 
     getPosition(): Observable<any> {
@@ -112,6 +122,34 @@ export class PageService {
             .pipe(
                 switchMap((response: any) => {
                     return of(response.data);
+                })
+            );
+    }
+
+    getClient(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_client')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+    getFinanace(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_finance')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+    getProduct(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_product')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
                 })
             );
     }
