@@ -69,6 +69,8 @@ export class FormDialogComponent implements OnInit {
     ngOnInit(): void {
         this.addForm = this.formBuilder.group({
             permission_id: [],
+            department: [],
+            position: [],
             user_id: [],
             password: [],
             name: [],

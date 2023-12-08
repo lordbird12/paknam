@@ -34,6 +34,7 @@ import { PageService } from '../page.service';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 import { tap } from 'rxjs';
 import { DataTablesModule } from 'angular-datatables';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'employee-list',
@@ -69,7 +70,8 @@ export class ListComponent implements OnInit, AfterViewInit {
     constructor(
         private dialog: MatDialog,
         private _changeDetectorRef: ChangeDetectorRef,
-        private _service: PageService
+        private _service: PageService,
+        private _router: Router
     ) {}
 
     ngOnInit() {
@@ -100,15 +102,16 @@ export class ListComponent implements OnInit, AfterViewInit {
         });
     }
     addElement() {
-        const dialogRef = this.dialog.open(FormDialogComponent, {
-            width: '500px', // กำหนดความกว้างของ Dialog
-        });
+        this._router.navigate(['admin/employee/form'])
+        // const dialogRef = this.dialog.open(FormDialogComponent, {
+        //     width: '860px', // กำหนดความกว้างของ Dialog
+        // });
 
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                //    console.log(result,'result')
-            }
-        });
+        // dialogRef.afterClosed().subscribe((result) => {
+        //     if (result) {
+        //         //    console.log(result,'result')
+        //     }
+        // });
     }
 
     pages = { current_page: 1, last_page: 1, per_page: 10, begin: 0 };

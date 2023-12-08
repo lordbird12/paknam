@@ -72,10 +72,18 @@ export class PageService {
             { headers: this.httpOptionsFormdata.headers }
         );
     }
-
+    getDepartment(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_department')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
     getPosition(): Observable<any> {
         return this._httpClient
-            .get<any>(environment.baseURL + '/api/positions')
+            .get<any>(environment.baseURL + '/api/get_position')
             .pipe(
                 tap((result) => {
                     this._data.next(result);
