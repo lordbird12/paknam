@@ -9,15 +9,8 @@
             <!-- Title -->
             <div class="flex flex-row mt-2 justify-between">
                 <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                    รายการลงเวลา
+                    รายงานจำนวนคงเหลือ
                 </h2>
-                <div class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                    <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="addTime()">
-                        <mat-icon>person_add</mat-icon>
-                        &nbsp;
-                        นำเข้าตารางเวลา
-                    </button>
-                </div>
             </div>
         </div>
     </div>
@@ -63,7 +56,6 @@
                         <td class="whitespace-nowrap px-6 py-4 ">{{item.name? item.name: '-'}}</td>
                         <td class="whitespace-nowrap px-6 py-4 text-center">{{item.products ? item.products.length : '0'}}</td>
                         <td class="whitespace-nowrap px-6 py-4">คัน</td>
-
                     </tr>
                 </tbody>
             </table>
