@@ -66,6 +66,7 @@ export class ListComponent implements OnInit, AfterViewInit {
     brand: any[] = [];
     currentDate  : any = new Date()
     form: FormGroup
+    total: number;
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     constructor(
         private dialog: MatDialog,
@@ -176,11 +177,17 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
 
     onCheck(id: any): void{
+
         this._service.getBrandCountModel(id).subscribe((resp: any)=>{
             this.dataRow = resp.data;
+            this.total =  this.dataRow.reduce((total, brand) => total + brand.products.length, 0);
             this._changeDetectorRef.detectChanges();
         })
     }
+
+    getTotalSales(products: any[]): number {
+        return products.reduce((total, product) => total + parseFloat(product.sale_price), 0);
+      }
 
     addTime() {
         const dialogRef = this.dialog.open(EditDialogComponent, {

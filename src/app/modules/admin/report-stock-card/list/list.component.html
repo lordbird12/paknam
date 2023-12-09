@@ -43,20 +43,25 @@
                 <thead class="border-b font-medium dark:border-neutral-500">
                     <tr>
                         <th scope="col" class="px-6 py-4">ลำดับ</th>
-                        <th scope="col" class="px-6 py-4">รุ่นรถ</th>
+                        <th scope="col" class="px-6 py-4 ">รุ่นรถ</th>
                         <th scope="col" class="px-6 py-4">จำนวนคงเหลือ</th>
                         <th scope="col" class="px-6 py-4">หน่วยนับ</th>
-
                     </tr>
                 </thead>
                 <tbody>
                     <tr class="border-b dark:border-neutral-500" *ngFor="let item of dataRow;let i = index">
-
                         <td class="whitespace-nowrap px-6 py-4 font-medium">{{i + 1 }}</td>
                         <td class="whitespace-nowrap px-6 py-4 ">{{item.name? item.name: '-'}}</td>
-                        <td class="whitespace-nowrap px-6 py-4 text-center">{{item.products ? item.products.length : '0'}}</td>
+                        <td class="whitespace-nowrap px-6 py-4 ">{{item.products ? item.products.length : '0'}}</td>
                         <td class="whitespace-nowrap px-6 py-4">คัน</td>
                     </tr>
+                    <tr class="border-b dark:border-neutral-500">
+                        <td class="whitespace-nowrap px-6 py-4 font-bold text-center" ></td>
+                        <td class="whitespace-nowrap px-6 py-4 font-bold" >รวม</td>
+                        <td class="whitespace-nowrap px-6 py-4 font-bold">{{this.total}}</td>
+                        <td class="whitespace-nowrap px-6 py-4 font-bold">คัน</td>
+                    </tr>
+
                 </tbody>
             </table>
         </div>
