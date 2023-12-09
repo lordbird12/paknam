@@ -92,7 +92,16 @@ export class ListComponent implements OnInit, AfterViewInit {
         });
     }
     addElement() {
-        this._router.navigate(['admin/permission/form'])
+        const dialogRef = this.dialog.open(FormDialogComponent, {
+            width: '500px', // กำหนดความกว้างของ Dialog
+
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                // เมื่อ Dialog ถูกปิด ดำเนินการตามผลลัพธ์ที่คุณได้รับจาก Dialog
+            }
+        });
     }
 
     pages = { current_page: 1, last_page: 1, per_page: 10, begin: 0 };
@@ -114,12 +123,10 @@ export class ListComponent implements OnInit, AfterViewInit {
                     this.pages.current_page = resp.data.current_page;
                     this.pages.last_page = resp.data.last_page;
                     this.pages.per_page = resp.data.per_page;
-                    if (resp.data.currentPage > 1) {
-                        this.pages.begin =
-                            parseInt(resp.data.itemsPerPage) *
-                            (parseInt(resp.data.currentPage) - 1);
+                    if (parseInt(resp.data.current_page) > 1) {
+                      this.pages.begin = parseInt(resp.data.per_page) * (parseInt(resp.data.current_page) - 1);
                     } else {
-                        this.pages.begin = 0;
+                      this.pages.begin = 0;
                     }
 
                     callback({

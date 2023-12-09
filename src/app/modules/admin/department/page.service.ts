@@ -48,7 +48,7 @@ export class PageService {
 
     create(data: FormData): Observable<any> {
         return this._httpClient
-            .post<any>(environment.baseURL + '/api/permission', data)
+            .post<any>(environment.baseURL + '/api/department', data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -58,7 +58,7 @@ export class PageService {
 
     update(data: any, id: any): Observable<any> {
         return this._httpClient
-            .put<any>(environment.baseURL + '/api/permission/' + id, data)
+            .put<any>(environment.baseURL + '/api/department/' + id, data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
