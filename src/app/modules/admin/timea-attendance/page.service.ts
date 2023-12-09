@@ -87,8 +87,7 @@ export class PageService {
 
     delete(id: any): Observable<any> {
         return this._httpClient.delete<any>(
-            environment.baseURL + '/api/employees/' + id,
-            { headers: this.httpOptionsFormdata.headers }
+            environment.baseURL + '/api/time/' + id,
         );
     }
 

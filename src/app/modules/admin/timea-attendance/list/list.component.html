@@ -47,6 +47,7 @@
             <table class="min-w-full text-left text-lg font-light">
                 <thead class="border-b font-medium dark:border-neutral-500">
                     <tr>
+                        <th scope="col" class="px-6 py-4">จัดการ</th>
                         <th scope="col" class="px-6 py-4">ลำดับ</th>
                         <th scope="col" class="px-6 py-4">รหัสพนักงาน</th>
                         <th scope="col" class="px-6 py-4">ชื่อพนักงาน</th>
@@ -58,6 +59,12 @@
                 </thead>
                 <tbody>
                     <tr class="border-b dark:border-neutral-500" *ngFor="let item of dataRow;let i = index">
+                        <td>
+
+                            <button mat-icon-button color="accent" (click)="deleteElement(item.id)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </td>
                         <td class="whitespace-nowrap px-6 py-4 font-medium">{{i + 1 }}</td>
                         <td class="whitespace-nowrap px-6 py-4">{{item.user_no? item.user_no: '-'}}</td>
                         <td class="whitespace-nowrap px-6 py-4">{{item.name? item.name: '-'}}</td>

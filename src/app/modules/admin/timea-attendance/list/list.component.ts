@@ -28,6 +28,7 @@ import { DataTablesModule } from 'angular-datatables';
 import { Router } from '@angular/router';
 import { PictureComponent } from '../../picture/picture.component';
 import moment from 'moment';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 @Component({
     selector: 'employee-list',
@@ -70,7 +71,8 @@ export class ListComponent implements OnInit, AfterViewInit {
         private _changeDetectorRef: ChangeDetectorRef,
         private _service: PageService,
         private _router: Router,
-        private _fb: FormBuilder
+        private _fb: FormBuilder,
+        private _fuseConfirmationService: FuseConfirmationService,
     ) {
         this.form = this._fb.group({
             date: '',
@@ -105,8 +107,66 @@ export class ListComponent implements OnInit, AfterViewInit {
         this._router.navigate(['admin/sales/form']);
     }
 
-    deleteElement() {
-        // เขียนโค้ดสำหรับการลบออกองคุณ
+
+
+    deleteElement(id: any): void {
+        const confirmation = this._fuseConfirmationService.open({
+            title: 'ลบรายการที่เลือก',
+            message: 'คุณต้องการลบรายการที่เลือกใช่หรือไม่ ',
+            icon: {
+                show: false,
+                name: 'heroicons_outline:exclamation',
+                color: 'warning',
+            },
+            actions: {
+                confirm: {
+                    show: true,
+                    label: 'ยืนยัน',
+                    color: 'primary',
+                },
+                cancel: {
+                    show: true,
+                    label: 'ยกเลิก',
+                },
+            },
+            dismissible: true,
+        });
+
+        // Subscribe to the confirmation dialog closed action
+        confirmation.afterClosed().subscribe((result) => {
+            // If the confirm button pressed...
+            if (result === 'confirmed') {
+                this._service.delete(id).subscribe({
+                    next: (resp: any) => {
+                        location.reload();
+                    },
+                    error: (err: any) => {
+                        this._fuseConfirmationService.open({
+                            title: 'กรุณาระบุข้อมูล',
+                            message: err.error.message,
+                            icon: {
+                                show: true,
+                                name: 'heroicons_outline:exclamation',
+                                color: 'warning',
+                            },
+                            actions: {
+                                confirm: {
+                                    show: false,
+                                    label: 'ยืนยัน',
+                                    color: 'primary',
+                                },
+                                cancel: {
+                                    show: false,
+                                    label: 'ยกเลิก',
+                                },
+                            },
+                            dismissible: true,
+                        });
+                        // console.log(err.error.message);
+                    },
+                });
+            }
+        });
     }
 
     showPicture(imgObject: any): void {
