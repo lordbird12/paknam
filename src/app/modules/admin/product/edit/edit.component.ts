@@ -163,7 +163,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     getArea(): void {
-        this._Service.getArea().subscribe((resp) => {
+        this._Service.getBrand().subscribe((resp) => {
             this.itemArea = resp.data;
         });
     }

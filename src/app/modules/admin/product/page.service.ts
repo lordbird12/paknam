@@ -112,9 +112,39 @@ export class Service {
             );
     }
 
-    getArea(): Observable<any> {
+    getBrand(): Observable<any> {
         return this._httpClient
-            .get<any>(environment.baseURL + '/api/get_area')
+            .get<any>(environment.baseURL + '/api/get_brand')
+            .pipe(
+                tap((data) => {
+                    this._data.next(data);
+                })
+            );
+    }
+
+    getBrandModel(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_brand_model')
+            .pipe(
+                tap((data) => {
+                    this._data.next(data);
+                })
+            );
+    }
+
+    getCC(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_c_c')
+            .pipe(
+                tap((data) => {
+                    this._data.next(data);
+                })
+            );
+    }
+
+    getColor(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_color')
             .pipe(
                 tap((data) => {
                     this._data.next(data);

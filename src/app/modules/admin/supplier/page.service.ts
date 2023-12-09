@@ -105,7 +105,7 @@ export class PageService {
     getPage(dataTablesParameters: any): Observable<DataTablesResponse> {
         return this._httpClient
             .post(
-                environment.baseURL + '/api/employees_page',
+                environment.baseURL + '/api/supplier_page',
                 dataTablesParameters,
                 this.httpOptionsFormdata
             )

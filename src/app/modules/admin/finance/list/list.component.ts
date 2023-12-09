@@ -94,7 +94,7 @@ export class ListComponent implements OnInit, AfterViewInit {
         });
     }
     addElement() {
-        this._router.navigate(['admin/permission/form']);
+        this._router.navigate(['admin/finance/form']);
     }
 
     pages = { current_page: 1, last_page: 1, per_page: 10, begin: 0 };

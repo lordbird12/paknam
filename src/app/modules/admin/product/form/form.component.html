@@ -29,33 +29,21 @@
                 </span>
                 <div class="-mx-3 md:flex mb-6">
 
-                    <div class="md:w-1/2 px-3 mb-6 md:mb-0">
+                    <div class="md:w-full px-3 mb-6 md:mb-0">
 
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                             <mat-label>หมวดหมู่สินค้าหลัก</mat-label>
-                            <mat-select [formControlName]="'category_product_id'" (selectionChange)="somethingChanged($event)">
+                            <mat-select [formControlName]="'category_product_id'">
                                 <mat-option [value]="''">
                                     <span>เลือกหมวดหมู่สินค้า</span>
                                 </mat-option>
-                                <mat-option *ngFor="let item of item1Data" [value]="item.sub_categories">
+                                <mat-option *ngFor="let item of item1Data" [value]="item.id">
                                     {{item.name}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="md:w-1/2 px-3 mb-6 md:mb-0">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>หมวดหมู่ย่อย</mat-label>
-                            <mat-select [formControlName]="'sub_category_product_id'">
-                                <mat-option [value]="''">
-                                    <span>เลือกหมวดหมู่สินค้า</span>
-                                </mat-option>
-                                <mat-option *ngFor="let item of item2Data" [value]="item.id">
-                                    {{item.name}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
+
                 </div>
                 <div class="-mx-3 md:flex mb-6">
                     <div class="md:w-1/2 px-3 mb-6 md:mb-0">
@@ -74,12 +62,12 @@
                     <div class="md:w-1/2 px-3">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                             <mat-label>ประเภทสินค้า</mat-label>
-                            <mat-select>
+                            <mat-select [formControlName]="'type'">
                                 <mat-option [value]="''">
                                     <span>เลือกประเภทสินค้า</span>
                                 </mat-option>
-                                <mat-option value="Good">สินค้าพร้อมจำหน่าย</mat-option>
-                                <mat-option value="Raw">วัตถุดิบสินค้า</mat-option>
+                                <mat-option value="First">มือหนึ่ง</mat-option>
+                                <mat-option value="Secound">มือสอง</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
@@ -93,18 +81,10 @@
                         </mat-form-field>
                     </div>
                 </div>
-                <div class="-mx-3 md:flex mb-2">
-                    <div class="md:min-w-full px-3 mb-6 md:mb-0">
-                        <mat-form-field class="w-full">
-                            <mat-label>รายละเอียด</mat-label>
-                            <textarea matInput [placeholder]="'กรอกข้อมูลที่อยู่'" [formControlName]="'detail'" [rows]="3"></textarea>
-                        </mat-form-field>
-                    </div>
-                </div>
                 <div class="-mx-3 md:flex mb-6">
                     <div class="md:w-1/2 px-3 mb-6 md:mb-0">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ต้นทุน</mat-label>
+                            <mat-label>ราคาทุน</mat-label>
                             <input matInput [placeholder]="'ต้นทุน'" [formControlName]="'cost'">
                             <!-- <mat-hint>This is a hint text</mat-hint> -->
                         </mat-form-field>
@@ -121,80 +101,109 @@
                 <div class="-mx-3 md:flex mb-6">
                     <div class="md:w-1/3 px-3 mb-6 md:mb-0">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>จำนวน</mat-label>
-                            <input matInput [placeholder]="'จำนวน'" [formControlName]="'qty'">
+                            <mat-label>ปี</mat-label>
+                            <input matInput [placeholder]="'ปี'" [formControlName]="'year'">
                             <!-- <mat-hint>This is a hint text</mat-hint> -->
                         </mat-form-field>
                     </div>
-                    <div class="md:w-1/3 px-3 mb-6 md:mb-0">
+                    <div class="md:w-2/3 px-3 mb-6 md:mb-0">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ขั้นต่ำ</mat-label>
-                            <input matInput [placeholder]="'ขั้นต่ำ'" [formControlName]="'min'">
-                            <!-- <mat-hint>This is a hint text</mat-hint> -->
-                        </mat-form-field>
-                    </div>
-                    <div class="md:w-1/3 px-3 mb-6 md:mb-0">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>สูงสุด</mat-label>
-                            <input matInput [placeholder]="'สูงสุด'" [formControlName]="'max'">
+                            <mat-label>ทะเบียนรถ</mat-label>
+                            <input matInput [placeholder]="'ทะเบียน'" [formControlName]="'license_plate'">
                             <!-- <mat-hint>This is a hint text</mat-hint> -->
                         </mat-form-field>
                     </div>
 
+
+                </div>
+                <div class="-mx-3 md:flex mb-2">
+                    <div class="md:min-w-full px-3 mb-6 md:mb-0">
+                        <mat-form-field class="w-full">
+                            <mat-label>รายละเอียด</mat-label>
+                            <textarea matInput [placeholder]="'กรอกข้อมูลที่อยู่'" [formControlName]="'detail'" [rows]="2"></textarea>
+                        </mat-form-field>
+                    </div>
                 </div>
             </form>
             <form class="bg-card rounded-2xl md:shadow overflow-hidden px-8 pt-6 pb-8 mb-4 flex flex-col my-2" [formGroup]="formData2"> <span class="text-xl md:text-xl font-bold tracking-tight leading-7 sm:leading-10 truncate text-gray-500">
-                    การจัดเก็บ
+                    คุณลักษณะ
                 </span>
                 <div class="-mx-3 md:flex mb-6">
-                    <div class="md:min-w-full px-3 mb-6 md:mb-0">
-                        <mat-form-field [ngClass]="formFieldHelpers" (selectionChange)="somethingAreaChanged($event)" class="w-full">
-                            <mat-label>เลือกโรงเก็บ</mat-label>
-                            <mat-select>
-                                <mat-option *ngFor="let item of itemArea" [value]="item.shelfs">
-                                    {{item.name}}
-                                </mat-option>
-                            </mat-select>
+                    <div class="md:w-1/2 px-3 mb-6 md:mb-0">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>เลขถัง</mat-label>
+                            <input matInput [placeholder]="'เลขถัง'" [formControlName]="'tank_no'">
+                            <!-- <mat-hint>This is a hint text</mat-hint> -->
                         </mat-form-field>
                     </div>
-                </div>
-                <div class="-mx-3 md:flex mb-6">
-                    <div class="md:min-w-full px-3 mb-6 md:mb-0">
-                        <mat-form-field [ngClass]="formFieldHelpers" (selectionChange)="somethingShelfChanged($event)" class="w-full">
-                            <mat-label>เลือกตู้เก็บของ</mat-label>
-                            <mat-select>
-                                <mat-option *ngFor="let item of itemShelve" [value]="item.floors">
-                                    {{item.name}}
-                                </mat-option>
-                            </mat-select>
+                    <div class="md:w-1/2 px-3">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>เลขเครื่อง</mat-label>
+                            <input matInput [placeholder]="'เลขเครื่อง'" [formControlName]="'engine_no'">
+                            <!-- <mat-hint>This is a hint text</mat-hint> -->
                         </mat-form-field>
                     </div>
-                </div>
-                <div class="-mx-3 md:flex mb-6">
-                    <div class="md:min-w-full px-3 mb-6 md:mb-0">
-                        <mat-form-field [ngClass]="formFieldHelpers" (selectionChange)="somethingFloorChanged($event)" class="w-full">
-                            <mat-label>เลือกชั้นเก็บของ</mat-label>
-                            <mat-select>
-                                <mat-option *ngFor="let item of itemFloor" [value]="item.channels">
-                                    {{item.name}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="-mx-3 md:flex mb-6">
 
+                </div>
+                <div class="-mx-3 md:flex mb-6">
                     <div class="md:min-w-full px-3 mb-6 md:mb-0">
-                        <mat-form-field [ngClass]="formFieldHelpers" (selectionChange)="somethingChannelChanged($event)" class="w-full">
-                            <mat-label>เลือกช่องเก็บของ</mat-label>
-                            <mat-select>
-                                <mat-option *ngFor="let item of itemChannel" [value]="item.id">
+                        <mat-form-field [ngClass]="formFieldHelpers" (selectionChange)="somethingBrandChanged($event)" class="w-full">
+                            <mat-label>ยี่ห้อ</mat-label>
+                            <mat-select [formControlName]="'brand_id'">
+                                <mat-option [value]="''">
+                                    <span>เลือกยี่ห้อ</span>
+                                </mat-option>
+                                <mat-option *ngFor="let item of itemBrand" [value]="item.id">
                                     {{item.name}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                 </div>
+                <div class="-mx-3 md:flex mb-6">
+                    <div class="md:min-w-full px-3 mb-6 md:mb-0">
+                        <mat-form-field [ngClass]="formFieldHelpers" (selectionChange)="somethingBrandModelChanged($event)" class="w-full">
+                            <mat-label>รุ่น</mat-label>
+                            <mat-select [formControlName]="'brand_model_id'">
+                                <mat-option [value]="''">
+                                    <span>เลือกรุ่น</span>
+                                </mat-option>
+                                <mat-option *ngFor="let item of itemBrandModel" [value]="item.id">
+                                    {{item.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="-mx-3 md:flex mb-6">
+                    <div class="md:min-w-1/2 px-3 mb-6 md:mb-0">
+                        <mat-form-field [ngClass]="formFieldHelpers" (selectionChange)="somethingCCChanged($event)" class="w-full">
+                            <mat-label>ซีซี</mat-label>
+                            <mat-select [formControlName]="'cc_id'">
+                                <mat-option [value]="''">
+                                    <span>เลือกซีซี</span>
+                                </mat-option>
+                                <mat-option *ngFor="let item of itemCC" [value]="item.id">
+                                    {{item.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="md:min-w-1/2 px-3 mb-6 md:mb-0">
+                        <mat-form-field [ngClass]="formFieldHelpers" (selectionChange)="somethingColorChanged($event)" class="w-full">
+                            <mat-label>สี</mat-label>
+                            <mat-select [formControlName]="'color_id'">
+                                <mat-option [value]="''">
+                                    <span>เลือกสี</span>
+                                </mat-option>
+                                <mat-option *ngFor="let item of itemColor" [value]="item.id">
+                                    {{item.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
                 <div class="-mx-3 md:flex mb-6">
 
                     <div class="md:min-w-full px-3 mb-6 md:mb-0">
