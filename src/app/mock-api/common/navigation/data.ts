@@ -137,6 +137,29 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:home',
         children: [
             {
+                id: 'apps.report',
+                title: 'รายงาน',
+                type: 'collapsable',
+                icon: 'heroicons_outline:document-text',
+                children: [
+                    {
+                        id: 'apps.report.stock-vat',
+                        title: 'สต๊อครวมภาษี',
+                        type: 'basic',
+                        link: '/admin/report-stock-vat/list',
+                        exactMatch: true,
+                    },
+                    {
+                        id: 'apps.report.stock-card',
+                        title: 'สินค้าคงเหลือ',
+                        type: 'basic',
+                        link: '/admin/report-stock-card/list',
+                        exactMatch: true,
+                    },
+
+                ],
+            },
+            {
                 id: 'apps.file-manager',
                 title: 'ไฟล์เอกสาร',
                 type: 'basic',

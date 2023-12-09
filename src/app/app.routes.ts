@@ -105,6 +105,8 @@ export const appRoutes: Route[] = [
                     { path: 'branch', loadChildren: () => import('app/modules/admin/branch/page.routes') },
                     { path: 'transfer', loadChildren: () => import('app/modules/admin/transfer/page.routes') },
                     { path: 'purchase', loadChildren: () => import('app/modules/admin/purchase/page.routes') },
+                    { path: 'report-stock-vat', loadChildren: () => import('app/modules/admin/report-stock-vat/page.routes') },
+                    { path: 'report-stock-card', loadChildren: () => import('app/modules/admin/report-stock-card/page.routes') },
                ]
             },
 

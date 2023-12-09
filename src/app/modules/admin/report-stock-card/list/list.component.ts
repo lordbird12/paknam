@@ -63,6 +63,7 @@ export class ListComponent implements OnInit, AfterViewInit {
     positions: any[];
     // public dataRow: any[];
     dataRow: any[] = [];
+    brand: any[] = [];
     currentDate  : any = new Date()
     form: FormGroup
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -74,20 +75,11 @@ export class ListComponent implements OnInit, AfterViewInit {
         private _fb: FormBuilder,
         private _fuseConfirmationService: FuseConfirmationService,
     ) {
-        this.form = this._fb.group({
-            date: '',
-        });
-        this.form.patchValue({
-            date: moment(this.currentDate).format('YYYY-MM-DD')
-        })
-        this._service.getTime(this.form.value).subscribe((resp: any)=>{
-            this.form.patchValue({
-                date: moment(this.currentDate).format('YYYY-MM-DD')
-            })
-            this.dataRow = resp.data
-
+        this._service.getBrand().subscribe((resp: any)=>{
+            this.brand = resp.data;
             this._changeDetectorRef.detectChanges();
         })
+
 
     }
 
@@ -137,7 +129,7 @@ export class ListComponent implements OnInit, AfterViewInit {
             // If the confirm button pressed...
             if (result === 'confirmed') {
                 this._service.delete(id).subscribe({
-                    next: (resp: any) => {
+                 next: (resp: any) => {
                         location.reload();
                     },
                     error: (err: any) => {
@@ -183,11 +175,9 @@ export class ListComponent implements OnInit, AfterViewInit {
             });
     }
 
-    onCheck(): void{
-        let formValue = this.form.value;
-        formValue.date = moment(formValue.date).format('YYYY-MM-DD')
-        this._service.getTime(formValue).subscribe((resp: any)=>{
-            this.dataRow = resp.data
+    onCheck(id: any): void{
+        this._service.getBrandCountModel(id).subscribe((resp: any)=>{
+            this.dataRow = resp.data;
             this._changeDetectorRef.detectChanges();
         })
     }
