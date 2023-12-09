@@ -91,6 +91,7 @@ export const appRoutes: Route[] = [
             //Sales
             {
                 path: 'admin', children: [
+                    { path: 'department', loadChildren: () => import('app/modules/admin/department/page.routes') },
                     { path: 'position', loadChildren: () => import('app/modules/admin/position/page.routes') },
                     { path: 'employee', loadChildren: () => import('app/modules/admin/employee/page.routes') },
                     { path: 'permission', loadChildren: () => import('app/modules/admin/permission/page.routes') },

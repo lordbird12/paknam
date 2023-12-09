@@ -66,9 +66,9 @@ export class ListComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.loadTable();
-        this._service.getPosition().subscribe((resp: any)=>{
-            this.positions = resp.data
-        })
+        // this._service.getPosition().subscribe((resp: any)=>{
+        //     this.positions = resp.data
+        // })
     }
 
     ngAfterViewInit(): void {
@@ -92,7 +92,7 @@ export class ListComponent implements OnInit, AfterViewInit {
         });
     }
     addElement() {
-        this._router.navigate(['admin/permission/form'])
+        this._router.navigate(['admin/transfer/form'])
     }
 
     pages = { current_page: 1, last_page: 1, per_page: 10, begin: 0 };

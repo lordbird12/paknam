@@ -150,10 +150,10 @@ export class ListComponent implements OnInit, AfterViewInit {
 
     }
     addElement() {
-        this._router.navigate(['/admin/customer/form'])
+        this._router.navigate(['/admin/supplier/form'])
     }
     editElement(data: any) {
-        this._router.navigate(['/admin/customer/edit/' + data.id])
+        this._router.navigate(['/admin/supplier/edit/' + data.id])
     }
 }
 

@@ -76,10 +76,10 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
     item2Data: any = [];
     itemSupplier: any = [];
 
-    itemArea: any = [];
-    itemShelve: any = [];
-    itemFloor: any = [];
-    itemChannel: any = [];
+    itemBrand: any = [];
+    itemBrandModel: any = [];
+    itemCC: any = [];
+    itemColor: any = [];
 
     formData: FormGroup;
     formData2: FormGroup;
@@ -107,28 +107,52 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
     async ngOnInit(): Promise<void> {
         this.formData = this._formBuilder.group({
             category_product_id: ['', Validators.required],
-            sub_category_product_id: ['', Validators.required],
+            pr_no: [''],
             name: [''],
             detail: [''],
-            qty: [''],
+            tank_no: [''],
+            engine_no: [''],
+            license_plate: [''],
             sale_price: [''],
             cost: [''],
             type: [''],
-            min: [''],
-            max: [''],
+            year: [''],
             supplier_id: [''],
+            brand_id: [''],
+            brand_model_id: [''],
+            cc_id: [''],
+            color_id: [''],
+            image: [''],
+            images: [''],
         });
 
         this.formData2 = this._formBuilder.group({
-            area_id: [''],
-            shelve_id: [''],
-            floor_id: [''],
-            channel_id: [''],
+            category_product_id: ['', Validators.required],
+            pr_no: [''],
+            name: [''],
+            detail: [''],
+            tank_no: [''],
+            engine_no: [''],
+            license_plate: [''],
+            sale_price: [''],
+            cost: [''],
+            type: [''],
+            year: [''],
+            supplier_id: [''],
+            brand_id: [''],
+            brand_model_id: [''],
+            cc_id: [''],
+            color_id: [''],
+            image: [''],
+            images: [''],
         });
 
         this.getCategories();
         this.getSuppliers();
-        this.getArea();
+        this.getBrand();
+        this.getBrandModel();
+        this.getCC();
+        this.getColor();
     }
 
     /**
@@ -155,9 +179,27 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
-    getArea(): void {
-        this._Service.getArea().subscribe((resp) => {
-            this.itemArea = resp.data;
+    getBrand(): void {
+        this._Service.getBrand().subscribe((resp) => {
+            this.itemBrand = resp.data;
+        });
+    }
+
+    getBrandModel(): void {
+        this._Service.getBrandModel().subscribe((resp) => {
+            this.itemBrandModel = resp.data;
+        });
+    }
+
+    getCC(): void {
+        this._Service.getCC().subscribe((resp) => {
+            this.itemCC = resp.data;
+        });
+    }
+
+    getColor(): void {
+        this._Service.getColor().subscribe((resp) => {
+            this.itemColor = resp.data;
         });
     }
 
@@ -168,24 +210,24 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.formFieldHelpers.join(' ');
     }
 
-    somethingChanged(event: any): void {
-        this.item2Data = event.value;
+    // somethingChanged(event: any): void {
+    //     this.item2Data = event.value;
+    // }
+
+    somethingBrandChanged(event: any): void {
+        this.itemBrand = event.value;
     }
 
-    somethingAreaChanged(event: any): void {
-        this.itemShelve = event.value;
+    somethingBrandModelChanged(event: any): void {
+        this.itemBrandModel = event.value;
     }
 
-    somethingShelfChanged(event: any): void {
-        this.itemFloor = event.value;
+    somethingCCChanged(event: any): void {
+        this.itemCC = event.value;
     }
 
-    somethingFloorChanged(event: any): void {
-        this.itemChannel = event.value;
-    }
-
-    somethingChannelChanged(event: any): void {
-        this.itemChannel = event.value;
+    somethingColorChanged(event: any): void {
+        this.itemColor = event.value;
     }
 
     onSelect(event) {
