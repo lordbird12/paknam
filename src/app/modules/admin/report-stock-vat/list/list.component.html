@@ -9,15 +9,15 @@
             <!-- Title -->
             <div class="flex flex-row mt-2 justify-between">
                 <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                    รายการสั่งซื้อ
+                    รายงานสต๊อครวมภาษี
                 </h2>
-                <div class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                <!-- <div class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
                     <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="addElement()">
                         <mat-icon svgIcon="heroicons_outline:plus-small"></mat-icon>
                         &nbsp;
                         เพิ่มคำสั่งซื้อ
                     </button>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -28,7 +28,6 @@
             <table datatable [dtOptions]="dtOptions" class="table row-border hover w-full bg-white whitespace-nowrap">
                 <thead>
                     <tr>
-                        <th class="w-[100px]">จัดการ</th>
                         <th class="w-[10px]">ลำดับ</th>
                         <th>ยื่นภาษีเดือนที่</th>
                         <th>วัน/เดือน/ปี</th>
@@ -36,9 +35,32 @@
                         <th>รุ่น</th>
                         <th>สี</th>
                         <th>หมายเลขถัง</th>
+                        <th>หมายเลขเครื่อง</th>
+                        <th>CORD</th>
+                        <th>รถมาจาก</th>
+                        <th>ก่อนภาษี</th>
+                        <th>ภาษีมูลค่าเพิ่ม</th>
+                        <th>จำนวนรวม</th>
+                        <th>เลขที่ใบกำกับขาย</th>
+                        <th>วัน/เดือน/ปี ที่ขาย</th>
+                        <th>ก่อนภาษี</th>
+                        <th>ภาษีมูลค่าเพิ่ม</th>
+                        <th>จำนวนรวม</th>
+                        <th>กำไร/ขาดทุน</th>
+                        <th>ค่าส่งเสริม</th>
+                        <th>ค่าจดทะเบียน</th>
+                        <th>พรบ</th>
+                        <th>ของแถม</th>
+                        <th>Vatขาย-Vatซื้อ</th>
+                        <th>กำไร คงเหลือ</th>
+                        <th>ชื่อลูกค้า</th>
+                        <th>สาขาที่ขาย</th>
+                        <th>เซลล์ผู้ขาย</th>
+                        <th>ไฟแนนท์</th>
+                        <th>เช็คยอดเงินเข้าธนาคาร</th>
                     </tr>
                 </thead>
-                <tbody *ngIf="dataRow?.length != 0">
+                <!-- <tbody *ngIf="dataRow?.length != 0">
                     <tr *ngFor="let item of dataRow; let i = index">
                         <td>
                             <button mat-icon-button color="accent" (click)="editElement(item)">
@@ -56,10 +78,10 @@
                         <td>{{ item.create_by ? item.create_by : "-" }}</td>
                         <td>{{ item.created_at | date : "dd-MM-yyyy hh:mm a " }}</td>
                     </tr>
-                </tbody>
+                </tbody> -->
                 <tbody *ngIf="dataRow?.length == 0">
                     <tr>
-                        <td colspan="7" class="no-data-available text-center">ไม่มีข้อมูล !</td>
+                        <td colspan="30" class="no-data-available text-center">ไม่มีข้อมูล !</td>
                     </tr>
                 </tbody>
             </table>

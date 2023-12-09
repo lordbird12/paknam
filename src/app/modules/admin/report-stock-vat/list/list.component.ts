@@ -68,6 +68,7 @@ export class ListComponent implements OnInit, AfterViewInit {
     ) {}
 
     ngOnInit() {
+
         this.loadTable();
 
     }
@@ -101,7 +102,8 @@ export class ListComponent implements OnInit, AfterViewInit {
                 that._service
                     .getPage(dataTablesParameters)
                     .subscribe((resp: any) => {
-                        this.dataRow = resp.data;
+                        this.dataRow = []
+                        // this.dataRow = resp.data;
                         this.pages.current_page = resp.current_page;
                         this.pages.last_page = resp.last_page;
                         this.pages.per_page = resp.per_page;

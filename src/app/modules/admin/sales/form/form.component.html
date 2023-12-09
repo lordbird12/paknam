@@ -144,7 +144,7 @@
                 </div>
             </form>
         </div>
-        <div class="grid gap-4 w-full sm:grid-cols-1 md:grid-cols-1" *ngIf="this.isForm === false">
+        <div class="grid gap-4 w-full sm:grid-cols-1 md:grid-cols-2" *ngIf="this.isForm === false">
             <div class="bg-card rounded-2xl md:shadow px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
                 <div class="flex flex-col md:flex-row m-5 justify-between">
                     <span
@@ -185,6 +185,42 @@
                                 <td class="whitespace-nowrap px-6 py-4 underline font-bold text-xl">{{this.total |
                                     number}} บาท
                                 </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="bg-card rounded-2xl md:shadow px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
+                <div class="flex flex-col md:flex-row m-5 justify-between">
+                    <span
+                        class="text-xl md:text-xl font-bold tracking-tight leading-7 sm:leading-10 truncate text-gray-500">
+                        ข้อมูลการเคลม
+                    </span>
+                    <div class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                        <button class="px-6 mt-2" mat-flat-button [color]="'primary'" (click)="claim()">
+                            บันทึกการเคลม
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-col justify-between">
+                    <table class="min-w-full text-left text-lg font-light">
+                        <thead class="border-b font-medium dark:border-neutral-500">
+                            <tr>
+                                <th scope="col" class="px-6 py-4">ครั้งที่</th>
+                                <th scope="col" class="px-6 py-4">วันที่</th>
+                                <th scope="col" class="px-6 py-4">เลขออเดอร์</th>
+                                <th scope="col" class="px-6 py-4">รายละเอียด</th>
+                                <th scope="col" class="px-6 py-4">ราคา</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b dark:border-neutral-500" *ngFor="let item of claimData;let i = index">
+                                <td class="whitespace-nowrap px-6 py-4 font-medium">{{i + 1 }}</td>
+                                <td class="whitespace-nowrap px-6 py-4">{{item.date | date : "dd-MM-yyyy"}}</td>
+                                <td class="whitespace-nowrap px-6 py-4">{{item.code? item.code: '-'}}</td>
+                                <td class="whitespace-nowrap px-6 py-4">{{item.remark? item.remark: '-'}}</td>
+                                <td class="whitespace-nowrap px-6 py-4">{{item.price | number}} บาท</td>
+
                             </tr>
                         </tbody>
                     </table>

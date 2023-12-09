@@ -64,6 +64,15 @@ export class PageService {
                 })
             );
     }
+    claim(data: FormData): Observable<any> {
+        return this._httpClient
+            .post<any>(environment.baseURL + '/api/cleam', data)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
 
     update(data: any, id: any): Observable<any> {
         return this._httpClient
@@ -156,6 +165,16 @@ export class PageService {
     getProduct(): Observable<any> {
         return this._httpClient
             .get<any>(environment.baseURL + '/api/get_product')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+
+    getClaim(id: any): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_cleam/' + id)
             .pipe(
                 tap((result) => {
                     this._data.next(result);

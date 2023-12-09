@@ -2,7 +2,7 @@
 
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { CommonModule, NgClass } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -22,6 +22,7 @@ import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PictureComponent } from '../picture/picture.component';
 import { environment } from 'environments/environment.development';
+import { ClaimDialogComponent } from '../claim-dialog/claim-dialog.component';
 @Component({
     selector: 'form-product',
     templateUrl: './form.component.html',
@@ -41,9 +42,11 @@ export class FormComponent implements OnInit {
     finanaceData: any[] = [];
     productData: any[] = [];
     paymentData: any[] = [];
+    claimData: any[] = [];
     itemData: any;
     total: number;
-    Id: number
+    Id: number;
+    claimId: number;
     saleType: any[] = [
         {
             code: 'Installment_with_finance',
@@ -69,7 +72,8 @@ export class FormComponent implements OnInit {
         private _router: Router,
         private _fuseConfirmationService: FuseConfirmationService,
         public activatedRoute: ActivatedRoute,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private _changeDetectorRef: ChangeDetectorRef,
     ) {
 
 
@@ -109,11 +113,19 @@ export class FormComponent implements OnInit {
                 this._service.getById(id).subscribe((resp: any) => {
                     this.itemData = resp.data;
                     this.paymentData = resp.data.orders.payments;
+
+                    this.claimId = resp.data.orders.product_id
                     this.total = this.paymentData.reduce((sum, current) => sum + (+current.price), 0);
                     this.form.patchValue({
                         ...this.itemData
                     });
+                    this._service.getClaim(this.claimId).subscribe((res: any)=>{
+                        this.claimData = res.data;
+                        console.log(this.claimData)
+                        this._changeDetectorRef.markForCheck();
+                    })
                 });
+
               });
         }
 
@@ -242,6 +254,24 @@ export class FormComponent implements OnInit {
                         ...this.itemData
                     });
                 });
+            }
+        });
+    }
+    claim() {
+        const dialogRef = this.dialog.open(ClaimDialogComponent, {
+            width: '500px', // กำหนดความกว้างของ Dialog
+            data: {
+                    data: this.itemData.id,
+            } // ส่งข้อมูลเริ่มต้นไปยัง Dialog
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this._service.getClaim(this.claimId).subscribe((res: any)=>{
+                    this.claimData = res.data;
+                    console.log(this.claimData)
+                    this._changeDetectorRef.markForCheck();
+                })
             }
         });
     }
