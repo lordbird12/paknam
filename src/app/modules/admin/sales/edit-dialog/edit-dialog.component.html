@@ -1,64 +1,70 @@
 <div class="md:max-w-lg mx-auto">
-    <h1 mat-dialog-title class="text-xl font-semibold mb-4">แก้ไขสินค้า</h1>
+    <h1 mat-dialog-title class="text-xl font-semibold mb-4">บันทึกการชำระเงิน</h1>
     <div mat-dialog-content>
-        <form [formGroup]="editForm">
-            <!-- <div class="mb-4">
-          <label for="no" class="block text-sm font-medium text-gray-700">No.</label>
-          <input type="text" id="no" class="mt-1 form-input rounded-md shadow-sm block w-full" formControlName="no" placeholder="No.">
-        </div> -->
-            <div class="mb-4">
-                <label for="code" class="block text-sm font-medium text-gray-700">รหัสสินค้า</label>
-                <input type="text" id="code" class="mt-1 form-input rounded-md shadow-sm block w-full"
-                    formControlName="code" placeholder="รหัสสินค้า">
+        <form class="bg-card rounded-2xl overflow-hidden px-8 pt-6 pb-8 mb-4 flex flex-col my-2" [formGroup]="form">
+            <div class="-mx-3 md:flex mb-6">
+                <div class="md:w-full px-3">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>วันที่ชำระ</mat-label>
+                        <input matInput [matDatepicker]="picker" formControlName="date">
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
             </div>
-            <div class="mb-4">
-                <label for="name" class="block text-sm font-medium text-gray-700">ชื่อ</label>
-                <input type="text" id="name" class="mt-1 form-input rounded-md shadow-sm block w-full"
-                    formControlName="name" placeholder="ชื่อสินค้า">
+            <div class="-mx-3 md:flex mb-6">
+
+                 <div class="md:w-full px-3 mb-6 md:mb-0">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>เลขออร์เดอร์</mat-label>
+                        <input matInput [placeholder]="'เลขออร์เดอร์'" formControlName="order_name" readonly>
+                        <!-- <mat-hint>This is a hint text</mat-hint> -->
+                    </mat-form-field>
+                </div>
             </div>
-            <div class="mb-4">
-                <label for="position_id" class="block text-sm font-medium text-gray-700">หน่วย</label>
-                <select id="position_id" class="mt-1 form-select rounded-md shadow-sm block w-full"
-                    formControlName="tax_type" >
-                    <option value="" disabled selected defaultSelected>เลือกประเภท</option>
-                    <option *ngFor="let item of uniType" [value]="item.id">{{item.name}}</option>
-                </select>
+            <div class="-mx-3 md:flex mb-6">
+
+                <div class="md:w-full px-3">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>งวดที่ชำระ</mat-label>
+                        <input matInput type="int" min="1" max="31" [placeholder]="'งวดที่ชำระ'" formControlName="payment_period">
+                        <!-- <mat-hint>This is a hint text</mat-hint> -->
+                    </mat-form-field>
+                </div>
             </div>
-            <div class="mb-4">
-                <label for="position_id" class="block text-sm font-medium text-gray-700">ประเภท</label>
-                <select id="position_id" class="mt-1 form-select rounded-md shadow-sm block w-full"
-                    formControlName="tax_type" >
-                    <option value="" disabled selected defaultSelected>เลือกประเภท</option>
-                    <option *ngFor="let item of taxType" [value]="item.id">{{item.name}}</option>
-                </select>
+            <div class="-mx-3 md:flex mb-6">
+
+                <div class="md:w-full px-3">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>จำนวนเงิน</mat-label>
+                        <input matInput [placeholder]="'จำนวนเงิน'" formControlName="price">
+                        <!-- <mat-hint>This is a hint text</mat-hint> -->
+                    </mat-form-field>
+                </div>
             </div>
-            <div class="mb-4">
-                <label for="price" class="block text-sm font-medium text-gray-700">ราคาขาย</label>
-                <input type="number" id="price" class="mt-1 form-input rounded-md shadow-sm block w-full"
-                    formControlName="price" placeholder="ราคาขาย">
+            <div class="-mx-3 md:flex mb-6">
+                <div class="md:w-full px-3">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>แนบสลิป</mat-label>
+                        <button mat-icon-button matPrefix (click)="image.click()">
+                            <mat-icon>attach_file</mat-icon>
+                          </button>
+                          <input type="text" [placeholder]="'เลือกสลิป'" readonly matInput [formControlName]="'image_name'" />
+                          <input type="file" hidden #image (change)="onSelect(image.files,'image')"/>
+                          <mat-error>กรุณาเลือกรูป</mat-error>
+                    </mat-form-field>
+                </div>
             </div>
-            <div class="mb-4">
-                <label for="cost" class="block text-sm font-medium text-gray-700">ราคาทุน</label>
-                <input type="number" id="cost" class="mt-1 form-input rounded-md shadow-sm block w-full"
-                    formControlName="cost" placeholder="ราคาทุน">
-            </div>
-            <div class="mb-4">
-                <label for="description" class="block text-sm font-medium text-gray-700">รายละเอียด</label>
-                <input type="tel" id="description" class="mt-1 form-input rounded-md shadow-sm block w-full"
-                    formControlName="description" placeholder="รายละเอียด">
-            </div>
-            <div class="mb-4">
-                <label for="remark" class="block text-sm font-medium text-gray-700">หมายเหตุ</label>
-                <textarea type="date" id="remark" placeholder="หมายเหตุ" class="mt-1 form-input rounded-md shadow-sm block w-full"
-                    formControlName="remark"></textarea>
-            </div>
+
         </form>
     </div>
-    <div mat-dialog-actions class="flex justify-end mt-4">
-        <button mat-button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 ml-2"
-            (click)="onSaveClick()">บันทึก</button>
-        &nbsp;
-        <button mat-button class="px-4 py-2 bg-gray-300 text-gray-600 rounded hover:bg-gray-400"
-            (click)="onCancelClick()">ยกเลิก</button>
+    <div mat-dialog-actions class="flex justify-end mt-2">
+        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="onSaveClick()">
+            บันทึก
+        </button>
+        <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onCancelClick()">
+            ยกเลิก
+        </button>
+
     </div>
 </div>

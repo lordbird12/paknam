@@ -17,6 +17,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatRadioModule } from '@angular/material/radio';
+import moment from 'moment';
 
 @Component({
     selector: 'app-edit-dialog',
@@ -45,9 +46,10 @@ import { MatRadioModule } from '@angular/material/radio';
     ],
 })
 export class EditDialogComponent implements OnInit {
+    formFieldHelpers: string[] = ['fuse-mat-dense'];
     flashMessage: 'success' | 'error' | null = null;
-    editForm: FormGroup;
-    positions: any[];
+    form: FormGroup;
+    order: any;
     taxType: any[] = [
         {
             id: 1,
@@ -86,21 +88,23 @@ export class EditDialogComponent implements OnInit {
 
     ngOnInit(): void {
         // สร้าง Reactive Form
-        this.editForm = this.formBuilder.group({
-            id: [],
-            no: [],
-            code: [],
-            name: [],
-            tax_type: [],
-            qty: '',
+        this.form = this.formBuilder.group({
+            date: '',
+            order_id: '',
+            order_name: '',
+            payment_period: '',
             price: '',
-            cost: '',
-            description: '',
-            remark: '',
-            vendor_id: ''
+            image: '',
+            image_name: ''
         });
-        this._service.getPosition().subscribe((resp: any)=>{
-            this.positions = resp.data
+        this._service.getById(this.data.data).subscribe((resp: any)=>{
+            this.order = resp.data
+            this.form.patchValue({
+                date: '',
+                order_id: this.data.data,
+                order_name: this.order.code,
+                payment_period: +this.order.orders.payments.length + 1
+            })
         })
 
         // console.log(this.data)
@@ -109,16 +113,14 @@ export class EditDialogComponent implements OnInit {
         //     ...this.data
         // })
 
-        console.log(this.data.data)
-
     }
 
     onSaveClick(): void {
         this.flashMessage = null;
         // this.flashErrorMessage = null;
         // Return if the form is invalid
-        if (this.editForm.invalid) {
-            this.editForm.enable();
+        if (this.form.invalid) {
+            this.form.enable();
             this._fuseConfirmationService.open({
                 "title": "กรุณาระบุข้อมูล",
                 "icon": {
@@ -169,14 +171,23 @@ export class EditDialogComponent implements OnInit {
         // Subscribe to the confirmation dialog closed action
         confirmation.afterClosed().subscribe((result) => {
             if (result === 'confirmed') {
-                const updatedData = this.editForm.value;
-                this._service.update(updatedData, this.data.id).subscribe({
+                let formValue = this.form.value;
+                formValue.date = this.form.value.date.c.year + '-' + this.form.value.date.c.month + '-' + this.form.value.date.c.day
+                const formData = new FormData();
+                Object.entries(formValue).forEach(
+                    ([key, value]: any[]) => {
+                        if (value !== '' && value !== 'null' && value !== null) {
+                            formData.append(key, value);
+                          }
+                    }
+                );
+                this._service.payment_period(formData).subscribe({
                     next: (resp: any) => {
                         this.showFlashMessage('success');
                         this.dialogRef.close(resp);
                     },
                     error: (err: any) => {
-                        this.editForm.enable();
+                        this.form.enable();
                         this._fuseConfirmationService.open({
                             "title": "กรุณาระบุข้อมูล",
                             "message": err.error.message,
@@ -230,4 +241,14 @@ export class EditDialogComponent implements OnInit {
             this._changeDetectorRef.markForCheck();
         }, 3000);
     }
+
+    files: File[] = [];
+    onSelect(event, input:any) {
+        this.form.patchValue({
+            image: event[0],
+            image_name: event[0].name,
+        });
+  }
+
+
 }

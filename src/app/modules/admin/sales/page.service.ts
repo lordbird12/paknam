@@ -55,6 +55,15 @@ export class PageService {
                 })
             );
     }
+    payment_period(data: FormData): Observable<any> {
+        return this._httpClient
+            .post<any>(environment.baseURL + '/api/payment_period', data)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
 
     update(data: any, id: any): Observable<any> {
         return this._httpClient
@@ -83,9 +92,9 @@ export class PageService {
             );
     }
 
-    getPosition(): Observable<any> {
+    getOrder(): Observable<any> {
         return this._httpClient
-            .get<any>(environment.baseURL + '/api/positions')
+            .get<any>(environment.baseURL + '/api/get_orders')
             .pipe(
                 tap((result) => {
                     this._data.next(result);

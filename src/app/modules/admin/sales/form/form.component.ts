@@ -20,6 +20,8 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import moment from 'moment';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { PictureComponent } from '../picture/picture.component';
+import { environment } from 'environments/environment.development';
 @Component({
     selector: 'form-product',
     templateUrl: './form.component.html',
@@ -41,6 +43,7 @@ export class FormComponent implements OnInit {
     paymentData: any[] = [];
     itemData: any;
     total: number;
+    Id: number
     saleType: any[] = [
         {
             code: 'Installment_with_finance',
@@ -102,6 +105,7 @@ export class FormComponent implements OnInit {
             this.activatedRoute.params.subscribe(params => {
                 this.isForm = false;
                 const id = params.id;
+                this.Id= id
                 this._service.getById(id).subscribe((resp: any) => {
                     this.itemData = resp.data;
                     this.paymentData = resp.data.orders.payments;
@@ -230,9 +234,32 @@ export class FormComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                // เมื่อ Dialog ถูกปิด ดำเนินการตามผลลัพธ์ที่คุณได้รับจาก Dialog
+                this._service.getById(this.Id).subscribe((resp: any) => {
+                    this.itemData = resp.data;
+                    this.paymentData = resp.data.orders.payments;
+                    this.total = this.paymentData.reduce((sum, current) => sum + (+current.price), 0);
+                    this.form.patchValue({
+                        ...this.itemData
+                    });
+                });
             }
         });
+    }
+
+    showPicture(imgObject: any): void {
+        console.log(imgObject)
+        this.dialog
+            .open(PictureComponent, {
+                autoFocus: false,
+                data: {
+                    imgSelected: environment.baseURL +  imgObject,
+                },
+            })
+            .afterClosed()
+            .subscribe(() => {
+                // Go up twice because card routes are setup like this; "card/CARD_ID"
+                // this._router.navigate(['./../..'], {relativeTo: this._activatedRoute});
+            });
     }
 }
 
