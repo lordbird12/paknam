@@ -40,7 +40,7 @@
                         </mat-form-field>
                     </div>
                     <div class="md:w-full px-3">
-                        <ngx-dropzone (change)="onSelect($event)" >
+                        <ngx-dropzone (change)="onSelect($event)">
                             <ngx-dropzone-label>เลือกรูปโปรไฟล์</ngx-dropzone-label>
                             <div *ngFor="let f of files">
                                 <ngx-dropzone-image-preview [file]="f" [removable]="true" (removed)="onRemove(f)"></ngx-dropzone-image-preview>

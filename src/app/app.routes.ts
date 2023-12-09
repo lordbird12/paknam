@@ -96,11 +96,14 @@ export const appRoutes: Route[] = [
                     { path: 'permission', loadChildren: () => import('app/modules/admin/permission/page.routes') },
                     { path: 'product', loadChildren: () => import('app/modules/admin/product/page.routes') },
                     { path: 'customer', loadChildren: () => import('app/modules/admin/customer/page.routes') },
-                    { path: 'shelf', loadChildren: () => import('app/modules/admin/shelf/page.routes') },
-                    { path: 'warehouse', loadChildren: () => import('app/modules/admin/warehouse/page.routes') },
-                    { path: 'raw', loadChildren: () => import('app/modules/admin/raw/page.routes') },
-                    { path: 'factories', loadChildren: () => import('app/modules/admin/factories/page.routes') },
+                    { path: 'finance', loadChildren: () => import('app/modules/admin/finance/page.routes') },
+                    { path: 'brand', loadChildren: () => import('app/modules/admin/brand/page.routes') },
                     { path: 'sales', loadChildren: () => import('app/modules/admin/sales/page.routes') },
+                    { path: 'supplier', loadChildren: () => import('app/modules/admin/supplier/page.routes') },
+                    { path: 'companie', loadChildren: () => import('app/modules/admin/companie/page.routes') },
+                    { path: 'branch', loadChildren: () => import('app/modules/admin/branch/page.routes') },
+                    { path: 'transfer', loadChildren: () => import('app/modules/admin/transfer/page.routes') },
+                    { path: 'purchase', loadChildren: () => import('app/modules/admin/purchase/page.routes') },
                ]
             },
 
