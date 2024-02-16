@@ -46,7 +46,7 @@ export class PageService {
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
-    create(data: FormData): Observable<any> {
+    create(data: any): Observable<any> {
         return this._httpClient
             .post<any>(environment.baseURL + '/api/department', data)
             .pipe(
