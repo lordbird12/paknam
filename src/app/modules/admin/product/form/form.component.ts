@@ -151,7 +151,7 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
         this.getCategories();
         this.getSuppliers();
         this.getBrand();
-        this.getBrandModel();
+        // this.getBrandModel();
         this.getCC();
         this.getColor();
     }
@@ -174,6 +174,7 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
+ 
     getSuppliers(): void {
         this._Service.getSuppliers().subscribe((resp) => {
             this.itemSupplier = resp.data;
@@ -186,8 +187,8 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
-    getBrandModel(): void {
-        this._Service.getBrandModel().subscribe((resp) => {
+    getBrandModel(id: any): void {
+        this._Service.getBrandModel(id).subscribe((resp) => {
             this.itemBrandModel = resp.data;
         });
     }

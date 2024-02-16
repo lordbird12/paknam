@@ -122,9 +122,9 @@ export class Service {
             );
     }
 
-    getBrandModel(): Observable<any> {
+    getBrandModel(id: any): Observable<any> {
         return this._httpClient
-            .get<any>(environment.baseURL + '/api/get_brand_model')
+            .get<any>(environment.baseURL + '/api/get_brand_model/' + id)
             .pipe(
                 tap((data) => {
                     this._data.next(data);
