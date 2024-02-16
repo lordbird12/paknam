@@ -48,7 +48,7 @@ export class PageService {
 
     create(data: FormData): Observable<any> {
         return this._httpClient
-            .post<any>(environment.baseURL + '/api/user', data)
+            .post<any>(environment.baseURL + '/api/companie', data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -56,9 +56,9 @@ export class PageService {
             );
     }
 
-    update(data: any, id: any): Observable<any> {
+    update(data: FormData): Observable<any> {
         return this._httpClient
-            .put<any>(environment.baseURL + '/api/employees/' + id, data)
+            .post<any>(environment.baseURL + '/api/update_companie' ,data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -68,8 +68,7 @@ export class PageService {
 
     delete(id: any): Observable<any> {
         return this._httpClient.delete<any>(
-            environment.baseURL + '/api/employees/' + id,
-            { headers: this.httpOptionsFormdata.headers }
+            environment.baseURL + '/api/companie/' + id
         );
     }
 
@@ -112,6 +111,16 @@ export class PageService {
             .pipe(
                 switchMap((response: any) => {
                     return of(response.data);
+                })
+            );
+    }
+
+    getById(id: any): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/companie/' + id)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
                 })
             );
     }

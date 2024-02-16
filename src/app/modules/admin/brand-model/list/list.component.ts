@@ -96,17 +96,13 @@ export class ListComponent implements OnInit, AfterViewInit {
             width: '500px', // กำหนดความกว้างของ Dialog
             maxHeight: '100Vh'
         });
-
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-
                 this.rerender();
-                // เมื่อ Dialog ถูกปิด ดำเนินการตามผลลัพธ์ที่คุณได้รับจาก Dialog
             }
         });
     }
-  
-
+    
     pages = { current_page: 1, last_page: 1, per_page: 10, begin: 0 };
     loadTable(): void {
         const that = this;

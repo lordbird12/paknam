@@ -46,7 +46,7 @@ export class PageService {
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
-    create(data: FormData): Observable<any> {
+    create(data: any): Observable<any> {
         return this._httpClient
             .post<any>(environment.baseURL + '/api/department', data)
             .pipe(
@@ -68,7 +68,7 @@ export class PageService {
 
     delete(id: any): Observable<any> {
         return this._httpClient.delete<any>(
-            environment.baseURL + '/api/permission/' + id,
+            environment.baseURL + '/api/department/' + id,
             { headers: this.httpOptionsFormdata.headers }
         );
     }

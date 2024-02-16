@@ -56,6 +56,25 @@ export class PageService {
             );
     }
 
+    createCC(data: any): Observable<any> {
+        return this._httpClient
+            .post<any>(environment.baseURL + '/api/c_c', data)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+    createColor(data: any): Observable<any> {
+        return this._httpClient
+            .post<any>(environment.baseURL + '/api/color', data)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+
     update(data: any): Observable<any> {
         return this._httpClient
             .post<any>(environment.baseURL + '/api/update_brand', data)
@@ -65,10 +84,51 @@ export class PageService {
                 })
             );
     }
-
+    updateModel(data: any, id: any): Observable<any> {
+        return this._httpClient
+            .put<any>(environment.baseURL + '/api/brand_model/'+ id, data)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+    updateCC(data: any, id: any): Observable<any> {
+        return this._httpClient
+            .put<any>(environment.baseURL + '/api/c_c/' + id, data)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+    updateColor(data: any, id: any): Observable<any> {
+        return this._httpClient
+            .put<any>(environment.baseURL + '/api/color/' + id, data)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
     delete(id: any): Observable<any> {
         return this._httpClient.delete<any>(
             environment.baseURL + '/api/brand/' + id,
+        );
+    }
+    deleteBrandModel(id: any): Observable<any> {
+        return this._httpClient.delete<any>(
+            environment.baseURL + '/api/brand_model/' + id,
+        );
+    }
+    deleteCC(id: any): Observable<any> {
+        return this._httpClient.delete<any>(
+            environment.baseURL + '/api/c_c/' + id,
+        );
+    }
+    deleteColor(id: any): Observable<any> {
+        return this._httpClient.delete<any>(
+            environment.baseURL + '/api/color/' + id,
         );
     }
 
@@ -99,6 +159,17 @@ export class PageService {
                 })
             );
     }
+
+    getByIdModel(id: string): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/brand_model/' + id)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+
     getPermission(): Observable<any> {
         return this._httpClient
             .get<any>(environment.baseURL + '/api/get_permission')
@@ -137,6 +208,30 @@ export class PageService {
         return this._httpClient
             .post(
                 environment.baseURL + '/api/brand_model_page',
+                dataTablesParameters,
+            )
+            .pipe(
+                switchMap((response: any) => {
+                    return of(response.data);
+                })
+            );
+    }
+    getPageCC(dataTablesParameters: any): Observable<DataTablesResponse> {
+        return this._httpClient
+            .post(
+                environment.baseURL + '/api/c_c_page',
+                dataTablesParameters,
+            )
+            .pipe(
+                switchMap((response: any) => {
+                    return of(response.data);
+                })
+            );
+    }
+    getPageColor(dataTablesParameters: any): Observable<DataTablesResponse> {
+        return this._httpClient
+            .post(
+                environment.baseURL + '/api/color_page',
                 dataTablesParameters,
             )
             .pipe(

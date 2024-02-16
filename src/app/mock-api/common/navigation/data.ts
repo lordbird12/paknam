@@ -88,13 +88,6 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 icon: 'heroicons_outline:cube',
                 link: '/admin/brand/list',
             },
-            {
-                id: 'products.brand_model',
-                title: 'รุ่น',
-                type: 'basic',
-                icon: 'heroicons_outline:cube',
-                link: '/admin/brand-model/list',
-            },
         ],
     },
     {
