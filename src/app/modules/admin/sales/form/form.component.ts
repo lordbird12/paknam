@@ -81,6 +81,7 @@ export class FormComponent implements OnInit {
 
 
         this.formData = this._fb.group({
+            code:'',
             date: '',
             client_id: '',
             total_price: '',
@@ -94,7 +95,12 @@ export class FormComponent implements OnInit {
                 product_id: '',
                 cost: '', //ต้นทุน
                 price: '' //ราคา
-            }
+            },
+            brand_id:'',
+            brand_model_id:'',
+            color_id:'',
+            cc_id:'',
+            product_code:''
 
         });
 
@@ -117,16 +123,32 @@ export class FormComponent implements OnInit {
                 this.Id= id
                 this._service.getById(id).subscribe((resp: any) => {
                     this.itemData = resp.data;
-                    this.paymentData = resp.data.orders.payments;
+                    this._service.getBrandModel(this.itemData.orders.product.brand_id).subscribe((resp: any) => {
+                        this.brandModelData = resp.data
+                    });
 
-                    this.claimId = resp.data.orders.product_id
+                    this._service.getProduct(this.itemData.orders.product.brand_model_id).subscribe((resp: any) => {
+                        this.productData = resp.data
+                        this.selectProduct(this.itemData.orders.product.code);
+                        this._changeDetectorRef.markForCheck();
+
+                    });
+
+                    this.paymentData = resp.data.orders.payments;
+                    this.claimId = resp.data.orders.product_id;
                     this.total = this.paymentData.reduce((sum, current) => sum + (+current.price), 0);
                     this.formData.patchValue({
-                        ...this.itemData
+                        ...this.itemData,
                     });
+                    this.formData.patchValue({
+                        brand_id:this.itemData.orders.product.brand_id,
+                        brand_model_id:this.itemData.orders.product.brand_model_id,
+                        product_code:this.itemData.orders.product.code,
+                    });
+                    
+                    this._changeDetectorRef.markForCheck();
                     this._service.getClaim(this.claimId).subscribe((res: any)=>{
                         this.claimData = res.data;
-                        console.log(this.claimData)
                         this._changeDetectorRef.markForCheck();
                     })
                 });
@@ -268,7 +290,7 @@ export class FormComponent implements OnInit {
                     this.paymentData = resp.data.orders.payments;
                     this.total = this.paymentData.reduce((sum, current) => sum + (+current.price), 0);
                     this.formData.patchValue({
-                        ...this.itemData
+                        ...this.itemData,
                     });
                 });
             }
