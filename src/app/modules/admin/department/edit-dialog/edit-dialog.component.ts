@@ -75,8 +75,6 @@ isInputDisabled: boolean = true;
         this.editForm = this.formBuilder.group({
             id: [],
             name: [],
-            active: [],
-
         });
      }
 
@@ -145,7 +143,7 @@ isInputDisabled: boolean = true;
         confirmation.afterClosed().subscribe((result) => {
             if (result === 'confirmed') {
                 const updatedData = this.editForm.value;
-                this._service.update(updatedData, this.data.id).subscribe({
+                this._service.update(updatedData, updatedData.id).subscribe({
                     next: (resp: any) => {
                         this.showFlashMessage('success');
                         this.dialogRef.close(resp);

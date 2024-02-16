@@ -111,13 +111,13 @@ export class ListComponent implements OnInit, AfterViewInit {
                 that._service.getPage(dataTablesParameters).subscribe((resp: any) => {
                     this.dataRow = resp.data;
                     // console.log('111',this.dataRow)
-                    this.pages.current_page = resp.data.current_page;
-                    this.pages.last_page = resp.data.last_page;
-                    this.pages.per_page = resp.data.per_page;
-                    if (resp.data.currentPage > 1) {
+                    this.pages.current_page = resp.current_page;
+                    this.pages.last_page = resp.last_page;
+                    this.pages.per_page = resp.per_page;
+                    if (resp.current_page > 1) {
                         this.pages.begin =
-                            parseInt(resp.data.itemsPerPage) *
-                            (parseInt(resp.data.currentPage) - 1);
+                            parseInt(resp.per_page) *
+                            (parseInt(resp.current_page) - 1);
                     } else {
                         this.pages.begin = 0;
                     }

@@ -50,7 +50,7 @@ export default [
         children : [
             {
                 path     : 'edit/:id',
-                component: EditComponent,
+                component: FormComponent,
                 resolve  : {
                     // brands    : () => inject(InventoryService).getBrands(),
                     // categories: () => inject(InventoryService).getCategories(),

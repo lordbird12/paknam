@@ -1,5 +1,5 @@
 <div class="md:max-w-lg mx-auto">
-    <h1 mat-dialog-title class="text-xl font-semibold mb-4 ml-5" *ngIf="!data">เพิ่มยี่ห้อ</h1>
+    <h1 mat-dialog-title class="text-xl font-semibold mb-4 ml-5" *ngIf="!data">เพิ่มรุ่น</h1>
     <h1 mat-dialog-title class="text-xl font-semibold mb-4 ml-5" *ngIf="data">แก้ไขยี่ห้อ</h1>
     <div mat-dialog-content class="max-h-96 overflow-y-auto md:max-h-180">
         <form [formGroup]="addForm">
@@ -14,7 +14,7 @@
                                 </mat-option>
                                 <mat-option 
                                 *ngFor="let item of brand"
-                                [value]="'id'">{{item.name}}</mat-option>
+                                [value]="item.id">{{item.name}}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>

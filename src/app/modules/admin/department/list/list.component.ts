@@ -19,8 +19,9 @@ import { MatTableModule } from '@angular/material/table';
 import { FormDialogComponent } from '../form-dialog/form-dialog.component';
 import { PageService } from '../page.service';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
-import { DataTablesModule } from 'angular-datatables';
+import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { Router } from '@angular/router';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 @Component({
     selector: 'list',
@@ -49,6 +50,8 @@ import { Router } from '@angular/router';
 })
 
 export class ListComponent implements OnInit, AfterViewInit {
+    @ViewChild(DataTableDirective)
+    dtElement!: DataTableDirective;
     isLoading: boolean = false;
     dtOptions: DataTables.Settings = {};
     positions: any[];
@@ -59,14 +62,15 @@ export class ListComponent implements OnInit, AfterViewInit {
         private dialog: MatDialog,
         private _changeDetectorRef: ChangeDetectorRef,
         private _service: PageService,
-        private _router: Router
+        private _router: Router,
+        private _fuseConfirmationService: FuseConfirmationService,
     ) {
 
-     }
+    }
 
     ngOnInit() {
         this.loadTable();
-        this._service.getPosition().subscribe((resp: any)=>{
+        this._service.getPosition().subscribe((resp: any) => {
             this.positions = resp.data
         })
     }
@@ -81,13 +85,13 @@ export class ListComponent implements OnInit, AfterViewInit {
         const dialogRef = this.dialog.open(EditDialogComponent, {
             width: '500px', // กำหนดความกว้างของ Dialog
             data: {
-                    data: element,
+                data: element,
             } // ส่งข้อมูลเริ่มต้นไปยัง Dialog
         });
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                // เมื่อ Dialog ถูกปิด ดำเนินการตามผลลัพธ์ที่คุณได้รับจาก Dialog
+                this.rerender()
             }
         });
     }
@@ -99,7 +103,7 @@ export class ListComponent implements OnInit, AfterViewInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                // เมื่อ Dialog ถูกปิด ดำเนินการตามผลลัพธ์ที่คุณได้รับจาก Dialog
+                this.rerender()
             }
         });
     }
@@ -119,38 +123,68 @@ export class ListComponent implements OnInit, AfterViewInit {
                 dataTablesParameters.status = null;
                 that._service.getPage(dataTablesParameters).subscribe((resp: any) => {
                     this.dataRow = resp.data;
-                    // console.log('111',this.dataRow)
-                    this.pages.current_page = resp.data.current_page;
-                    this.pages.last_page = resp.data.last_page;
-                    this.pages.per_page = resp.data.per_page;
-                    if (parseInt(resp.data.current_page) > 1) {
-                      this.pages.begin = parseInt(resp.data.per_page) * (parseInt(resp.data.current_page) - 1);
+                    this.pages.current_page = resp.current_page;
+                    this.pages.last_page = resp.last_page;
+                    this.pages.per_page = resp.per_page;
+                    if (parseInt(resp.current_page) > 1) {
+                        this.pages.begin = parseInt(resp.per_page) * (parseInt(resp.current_page) - 1);
                     } else {
-                      this.pages.begin = 0;
+                        this.pages.begin = 0;
                     }
 
                     callback({
-                        recordsTotal: resp.data.total,
-                        recordsFiltered: resp.data.total,
+                        recordsTotal: resp.total,
+                        recordsFiltered: resp.total,
                         data: [],
                     });
                     this._changeDetectorRef.markForCheck();
                 });
             },
             columns: [
-                { data: 'action',orderable: false },
+                { data: 'action', orderable: false },
                 { data: 'No' },
                 { data: 'name' },
                 { data: 'create_by' },
                 { data: 'created_at' },
-
             ],
         };
     }
 
-    deleteElement() {
-        // เขียนโค้ดสำหรับการลบออกองคุณ
+    delete(itemid: any) {
+        const confirmation = this._fuseConfirmationService.open({
+            title: 'ลบข้อมูล',
+            message: 'คุณต้องการลบข้อมูลใช่หรือไม่ ?',
+            icon: {
+                show: true,
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'warning',
+            },
+            actions: {
+                confirm: {
+                    show: true,
+                    label: 'ยืนยัน',
+                    color: 'warn',
+                },
+                cancel: {
+                    show: true,
+                    label: 'ยกเลิก',
+                },
+            },
+            dismissible: true,
+        });
+        confirmation.afterClosed().subscribe((result) => {
+            if (result === 'confirmed') {
+                this._service.delete(itemid).subscribe((resp) => {
+                    this.rerender();
+                });
+            }
+            error: (err: any) => {};
+        });
+    }
+    rerender(): void {
+        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.ajax.reload();
+        });
     }
 }
-
 

@@ -21,6 +21,10 @@ import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatDialog } from '@angular/material/dialog';
+import { FormDialogCCComponent } from '../form-dialog-cc/form-dialog.component';
+import { FormDialogColorComponent } from '../form-dialog-color/form-dialog.component';
 
 @Component({
   selector: 'edit-brand-model',
@@ -46,7 +50,8 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
     MatTableModule,
     DataTablesModule,
     MatCheckboxModule,
-    NgxDropzoneModule
+    NgxDropzoneModule,
+    MatTabsModule
   ],
 
 })
@@ -55,7 +60,8 @@ export class EditBrandModelComponent implements OnInit {
   @ViewChild(DataTableDirective)
   dtElement!: DataTableDirective;
   dataRow: any[] = [];
-  
+  dataRowcc: any[] = [];
+
   editForm: FormGroup;
   MenuList: any = [];
   formFieldHelpers: string[] = ['fuse-mat-dense'];
@@ -66,11 +72,13 @@ export class EditBrandModelComponent implements OnInit {
   Id: any;
   url_image: string;
   itemData: any;
-  dtOptions: DataTables.Settings = {};
+  dtOptionsCC: DataTables.Settings = {};
+  dtOptionsColor: DataTables.Settings = {};
   /**
    * Constructor
    */
   constructor(
+    private dialog: MatDialog,
     private _formBuilder: FormBuilder,
     private _Service: PageService,
     private _changeDetectorRef: ChangeDetectorRef,
@@ -79,9 +87,9 @@ export class EditBrandModelComponent implements OnInit {
     public activatedRoute: ActivatedRoute,
   ) {
     this.Id = this.activatedRoute.snapshot.paramMap.get('id');
- 
+
     this.editForm = this._formBuilder.group({
-      
+
       id: '',
       brand_id: '',
       name: '',
@@ -91,14 +99,14 @@ export class EditBrandModelComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._Service.getById(this.Id).subscribe((resp: any) => {
+    this._Service.getByIdModel(this.Id).subscribe((resp: any) => {
       this.itemData = resp.data;
       this.editForm.patchValue({
         ...this.itemData,
       })
     })
     this.loadTable();
-  
+
   }
 
   onSubmit(): void {
@@ -127,15 +135,8 @@ export class EditBrandModelComponent implements OnInit {
     // Subscribe to the confirmation dialog closed action
     confirmation.afterClosed().subscribe((result) => {
       if (result === 'confirmed') {
-        const formData = new FormData();
-        Object.entries(this.editForm.value).forEach(([key, value]: any[]) => {
-          formData.append(key, value);
-        });
-
-        for (var i = 0; i < this.files.length; i++) {
-          formData.append('image', this.files[i]);
-        }
-        this._Service.update(formData).subscribe({
+        let formValue = this.editForm.value
+        this._Service.updateModel(formValue, this.Id).subscribe({
           next: (resp: any) => {
 
 
@@ -169,51 +170,133 @@ export class EditBrandModelComponent implements OnInit {
     })
   }
 
+  addElementCC(data: any) {
+    const dialogRef = this.dialog.open(FormDialogCCComponent, {
+      width: '500px', // กำหนดความกว้างของ Dialog
+      maxHeight: '100Vh',
+      data: {
+        data: data,
+        brand_model_id: this.Id
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.rerender();
+      }
+    });
+  }
+
+  addElementColor(data: any) {
+    const dialogRef = this.dialog.open(FormDialogColorComponent, {
+      width: '500px', // กำหนดความกว้างของ Dialog
+      maxHeight: '100Vh',
+      data: {
+        data: data,
+        brand_model_id: this.Id
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.rerender();
+        this._changeDetectorRef.markForCheck();
+      }
+    });
+  }
+
+
+  rerender(): void {
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+      dtInstance.ajax.reload();
+    });
+  }
+
   pages = { current_page: 1, last_page: 1, per_page: 10, begin: 0 };
   loadTable(): void {
-      const that = this;
-      this.dtOptions = {
-          pagingType: "full_numbers",
-          pageLength: 25,
-          serverSide: true,
-          processing: true,
-          language: {
-              url: "https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json",
-          },
-          ajax: (dataTablesParameters: any, callback) => {
-              dataTablesParameters.status = null;
-              dataTablesParameters.brand_id = +this.Id;
-              that._Service.getPageBrandModel(dataTablesParameters).subscribe((resp: any) => {
-                  this.dataRow = resp.data;
-                  this.pages.current_page = resp.current_page;
-                  this.pages.last_page = resp.last_page;
-                  this.pages.per_page = resp.per_page;
-                  if (resp.current_page > 1) {
-                      this.pages.begin =
-                          parseInt(resp.per_page) *
-                          (parseInt(resp.current_page) - 1);
-                  } else {
-                      this.pages.begin = 0;
-                  }
+    const that = this;
+    this.dtOptionsCC = {
+      pagingType: "full_numbers",
+      pageLength: 25,
+      serverSide: true,
+      processing: true,
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json",
+      },
+      ajax: (dataTablesParameters: any, callback) => {
+        dataTablesParameters.status = null;
+        dataTablesParameters.brand_model_id = +this.Id;
+        that._Service.getPageCC(dataTablesParameters).subscribe((resp: any) => {
+          this.dataRowcc = resp.data;
+          this.pages.current_page = resp.current_page;
+          this.pages.last_page = resp.last_page;
+          this.pages.per_page = resp.per_page;
+          if (resp.current_page > 1) {
+            this.pages.begin =
+              parseInt(resp.per_page) *
+              (parseInt(resp.current_page) - 1);
+          } else {
+            this.pages.begin = 0;
+          }
 
-                  callback({
-                      recordsTotal: resp.total,
-                      recordsFiltered: resp.total,
-                      data: [],
-                  });
-                  this._changeDetectorRef.markForCheck();
-              });
-          },
-          columns: [
-              { data: 'action',orderable: false },
-              { data: 'No' },
-              { data: 'name' },
-              { data: 'detail' },
-              { data: 'create_by' },
-              { data: 'created_at' },
+          callback({
+            recordsTotal: resp.total,
+            recordsFiltered: resp.total,
+            data: [],
+          });
+          this._changeDetectorRef.markForCheck();
+        });
+      },
+      columns: [
+        { data: 'action', orderable: false },
+        { data: 'No' },
+        { data: 'name' },
+        { data: 'detail' },
+        { data: 'create_by' },
+        { data: 'created_at' },
 
-          ],
-      };
+      ],
+    };
+    this.dtOptionsColor = {
+      pagingType: "full_numbers",
+      pageLength: 25,
+      serverSide: true,
+      processing: true,
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json",
+      },
+      ajax: (dataTablesParameters: any, callback) => {
+        dataTablesParameters.status = null;
+        dataTablesParameters.brand_model_id = +this.Id;
+        that._Service.getPageColor(dataTablesParameters).subscribe((resp: any) => {
+          this.dataRow = resp.data;
+          this.pages.current_page = resp.current_page;
+          this.pages.last_page = resp.last_page;
+          this.pages.per_page = resp.per_page;
+          if (resp.current_page > 1) {
+            this.pages.begin =
+              parseInt(resp.per_page) *
+              (parseInt(resp.current_page) - 1);
+          } else {
+            this.pages.begin = 0;
+          }
+
+          callback({
+            recordsTotal: resp.total,
+            recordsFiltered: resp.total,
+            data: [],
+          });
+          this._changeDetectorRef.markForCheck();
+        });
+      },
+      columns: [
+        { data: 'action', orderable: false },
+        { data: 'No' },
+        { data: 'name' },
+        { data: 'detail' },
+        { data: 'create_by' },
+        { data: 'created_at' },
+
+      ],
+    };
   }
 
   // -----------------------------------------------------------------------------------------------------
@@ -235,7 +318,7 @@ export class EditBrandModelComponent implements OnInit {
     this.files.push(...event.addedFiles);
     setTimeout(() => {
       this._changeDetectorRef.detectChanges()
-  }, 150)
+    }, 150)
     this.url_image = null
   }
 
@@ -245,6 +328,70 @@ export class EditBrandModelComponent implements OnInit {
     if (index >= 0) {
       this.files.splice(index, 1);
     }
+  }
+
+  deleteCC(itemid: any) {
+    const confirmation = this._fuseConfirmationService.open({
+      title: 'ลบข้อมูล',
+      message: 'คุณต้องการลบข้อมูลใช่หรือไม่ ?',
+      icon: {
+        show: true,
+        name: 'heroicons_outline:exclamation-triangle',
+        color: 'warning',
+      },
+      actions: {
+        confirm: {
+          show: true,
+          label: 'ยืนยัน',
+          color: 'warn',
+        },
+        cancel: {
+          show: true,
+          label: 'ยกเลิก',
+        },
+      },
+      dismissible: true,
+    });
+    confirmation.afterClosed().subscribe((result) => {
+      if (result === 'confirmed') {
+        this._Service.deleteCC(itemid).subscribe((resp) => {
+          this.rerender();
+        });
+      }
+      error: (err: any) => { };
+    });
+  }
+
+  deleteColor(itemid: any) {
+    const confirmation = this._fuseConfirmationService.open({
+      title: 'ลบข้อมูล',
+      message: 'คุณต้องการลบข้อมูลใช่หรือไม่ ?',
+      icon: {
+        show: true,
+        name: 'heroicons_outline:exclamation-triangle',
+        color: 'warning',
+      },
+      actions: {
+        confirm: {
+          show: true,
+          label: 'ยืนยัน',
+          color: 'warn',
+        },
+        cancel: {
+          show: true,
+          label: 'ยกเลิก',
+        },
+      },
+      dismissible: true,
+    });
+    confirmation.afterClosed().subscribe((result) => {
+      if (result === 'confirmed') {
+        this._Service.deleteColor(itemid).subscribe((resp) => {
+          this.rerender();
+        });
+      }
+      error: (err: any) => { };
+    });
   }
 }
 
