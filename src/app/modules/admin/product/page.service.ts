@@ -196,14 +196,14 @@ export class Service {
             );
     }
 
-    new(data: any): Observable<any> {
+    new(data: FormData): Observable<any> {
         // Throw error, if the user is already logged in
         //  if (this._authenticated) {
         //     return throwError('User is already logged in.');
         // }
         return this._httpClient
             .post(
-                environment.baseURL + 'api/product',
+                environment.baseURL + '/api/product',
                 data,
                 this.httpOptionsFormdata
             )

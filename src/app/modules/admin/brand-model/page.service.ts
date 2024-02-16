@@ -1,26 +1,16 @@
 import {
     HttpClient,
-    HttpRequest,
-    HttpHandler,
-    HttpEvent,
     HttpHeaders,
-    HttpInterceptor,
 } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import {
     BehaviorSubject,
-    filter,
-    map,
     Observable,
     of,
     switchMap,
-    take,
     tap,
-    throwError,
 } from 'rxjs';
 import { environment } from 'environments/environment.development';
-import { Form } from '@angular/forms';
 import { DataTablesResponse } from 'app/shared/datatable.types';
 const token = localStorage.getItem('accessToken') || null;
 
@@ -48,7 +38,7 @@ export class PageService {
 
     create(data: FormData): Observable<any> {
         return this._httpClient
-            .post<any>(environment.baseURL + '/api/permission', data)
+            .post<any>(environment.baseURL + '/api/brand_model', data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -58,7 +48,7 @@ export class PageService {
 
     update(data: any, id: any): Observable<any> {
         return this._httpClient
-            .put<any>(environment.baseURL + '/api/permission/' + id, data)
+            .put<any>(environment.baseURL + '/api/brand_model/' + id, data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -68,8 +58,7 @@ export class PageService {
 
     delete(id: any): Observable<any> {
         return this._httpClient.delete<any>(
-            environment.baseURL + '/api/permission/' + id,
-            { headers: this.httpOptionsFormdata.headers }
+            environment.baseURL + '/api/brand_model/' + id,
         );
     }
 
@@ -81,9 +70,19 @@ export class PageService {
         );
     }
 
-    getPosition(): Observable<any> {
+    getBrand(): Observable<any> {
         return this._httpClient
-            .get<any>(environment.baseURL + '/api/positions')
+            .get<any>(environment.baseURL + '/api/get_brand')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+
+    getById(id: string): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/brand_model/' + id)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -113,9 +112,8 @@ export class PageService {
     getPage(dataTablesParameters: any): Observable<DataTablesResponse> {
         return this._httpClient
             .post(
-                environment.baseURL + '/api/permission_page',
+                environment.baseURL + '/api/brand_model_page',
                 dataTablesParameters,
-                this.httpOptionsFormdata
             )
             .pipe(
                 switchMap((response: any) => {

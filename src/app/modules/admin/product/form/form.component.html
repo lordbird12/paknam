@@ -125,7 +125,7 @@
                     </div>
                 </div>
             </form>
-            <form class="bg-card rounded-2xl md:shadow overflow-hidden px-8 pt-6 pb-8 mb-4 flex flex-col my-2" [formGroup]="formData2"> <span class="text-xl md:text-xl font-bold tracking-tight leading-7 sm:leading-10 truncate text-gray-500">
+            <form class="bg-card rounded-2xl md:shadow overflow-hidden px-8 pt-6 pb-8 mb-4 flex flex-col my-2" [formGroup]="formData"> <span class="text-xl md:text-xl font-bold tracking-tight leading-7 sm:leading-10 truncate text-gray-500">
                     คุณลักษณะ
                 </span>
                 <div class="-mx-3 md:flex mb-6">
@@ -203,16 +203,29 @@
                         </mat-form-field>
                     </div>
                 </div>
-
                 <div class="-mx-3 md:flex mb-6">
-
                     <div class="md:min-w-full px-3 mb-6 md:mb-0">
                         <div class="border-t border-gray-200">
                             <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                 <div class=" flex flex-wrap justify-start">
                                     <ngx-dropzone style="width: 100%; height: 120px; justify-content: center;" (change)="onSelect($event)">
-                                        <ngx-dropzone-label>รูปภาพเสริม</ngx-dropzone-label>
+                                        <ngx-dropzone-label>รูปหลัก</ngx-dropzone-label>
                                         <ngx-dropzone-image-preview *ngFor="let f of files" [removable]="true" [file]="f" (removed)="onRemove(f)">
+                                        </ngx-dropzone-image-preview>
+                                    </ngx-dropzone>
+                                </div>
+                            </dd>
+                        </div>
+                    </div>
+                </div>
+                <div class="-mx-3 md:flex mb-6">
+                    <div class="md:min-w-full px-3 mb-6 md:mb-0">
+                        <div class="border-t border-gray-200">
+                            <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                                <div class=" flex flex-wrap justify-start">
+                                    <ngx-dropzone style="width: 100%; height: 120px; justify-content: center;" (change)="onSelect1($event)">
+                                        <ngx-dropzone-label>รูปภาพเสริม</ngx-dropzone-label>
+                                        <ngx-dropzone-image-preview *ngFor="let f of files1" [removable]="true" [file]="f" (removed)="onRemove(f)">
                                         </ngx-dropzone-image-preview>
                                     </ngx-dropzone>
                                 </div>

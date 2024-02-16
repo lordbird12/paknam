@@ -85,6 +85,7 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
     formData2: FormGroup;
 
     files: File[] = [];
+    files1: File[] = [];
     warehouseData: any;
     /**
      * Constructor
@@ -236,12 +237,19 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => {
             this._changeDetectorRef.detectChanges();
         }, 150);
-      
+
+    }
+
+    onSelect1(event) {
+        this.files1.push(...event.addedFiles);
+        // Trigger Image Preview
+        setTimeout(() => {
+            this._changeDetectorRef.detectChanges();
+        }, 150);
     }
 
     onRemove(event) {
         this.files.splice(this.files.indexOf(event), 1);
-
     }
 
     New(): void {
@@ -277,15 +285,12 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
                         formData.append(key, value);
                     }
                 );
-
-                Object.entries(this.formData2.value).forEach(
-                    ([key, value]: any[]) => {
-                        formData.append(key, value);
-                    }
-                );
-
                 for (var i = 0; i < this.files.length; i++) {
-                    formData.append('images[]', this.files[i]);
+                    formData.append('image', this.files[i]);
+                }
+
+                for (var i = 0; i < this.files1.length; i++) {
+                    formData.append('images[]', this.files1[i]);
                 }
 
                 this._Service.new(formData).subscribe({

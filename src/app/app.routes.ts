@@ -99,6 +99,7 @@ export const appRoutes: Route[] = [
                     { path: 'customer', loadChildren: () => import('app/modules/admin/customer/page.routes') },
                     { path: 'finance', loadChildren: () => import('app/modules/admin/finance/page.routes') },
                     { path: 'brand', loadChildren: () => import('app/modules/admin/brand/page.routes') },
+                    { path: 'brand-model', loadChildren: () => import('app/modules/admin/brand-model/page.routes') },
                     { path: 'sales', loadChildren: () => import('app/modules/admin/sales/page.routes') },
                     { path: 'time-attendance', loadChildren: () => import('app/modules/admin/timea-attendance/page.routes') },
                     { path: 'supplier', loadChildren: () => import('app/modules/admin/supplier/page.routes') },

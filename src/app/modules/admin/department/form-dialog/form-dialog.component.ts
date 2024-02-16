@@ -73,33 +73,7 @@ export class FormDialogComponent implements OnInit{
 
     onSaveClick(): void {
         this.flashMessage = null;
-        if (this.addForm.value!) {
-            this.addForm.enable();
-            this._fuseConfirmationService.open({
-                "title": "กรุณาระบุข้อมูล",
-                "message": "กรุณาระบุข้อมูลให้ครบถ้วน",
-                "icon": {
-                    "show": true,
-                    "name": "heroicons_outline:exclamation",
-                    "color": "warning"
-                },
-                "actions": {
-                    "confirm": {
-                        "show": false,
-                        "label": "ยืนยัน",
-                        "color": "primary"
-                    },
-                    "cancel": {
-                        "show": false,
-                        "label": "ยกเลิก",
 
-                    }
-                },
-                "dismissible": true
-            });
-
-            return;
-        }
         // Open the confirmation dialog
         const confirmation = this._fuseConfirmationService.open({
             "title": "เพิ่มข้อมูล",
