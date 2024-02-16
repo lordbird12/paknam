@@ -17,6 +17,7 @@ import { CommonModule, NgClass } from '@angular/common';
 import { MatRadioModule } from '@angular/material/radio';
 import { PageService } from '../page.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { NgxDropzoneModule } from 'ngx-dropzone';
 
 @Component({
     selector: 'app-form-dialog',
@@ -42,30 +43,44 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
         MatTableModule,
         MatRadioModule,
         CommonModule,
+        NgxDropzoneModule
     ],
 })
-export class FormDialogComponent implements OnInit{
+export class FormDialogComponent implements OnInit {
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     addForm: FormGroup;
     isLoading: boolean = false;
     positions: any[];
     flashMessage: 'success' | 'error' | null = null;
     constructor(private dialogRef: MatDialogRef<FormDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) private data: any,
+        @Inject(MAT_DIALOG_DATA) public data: any,
         private formBuilder: FormBuilder,
         private _service: PageService,
         private _fuseConfirmationService: FuseConfirmationService,
         private _changeDetectorRef: ChangeDetectorRef
     ) {
-        this._service.getPosition().subscribe((resp: any)=>{
-            this.positions = resp.data
-        })
+
+        if (this.data) {
+            this._service.getById(this.data.id).subscribe((resp: any) => { })
+        }
+
+        this.addForm = this.formBuilder.group({
+            id: '',
+            name: [],
+            detail: '',
+            image: [],
+            status: '',
+        });
     }
 
     ngOnInit(): void {
-        this.addForm = this.formBuilder.group({
-            name: [],
-        });
+
+        if (this.data) {
+            this.addForm.patchValue({
+                ...this.data
+            })
+        }
+
 
     }
 
@@ -73,96 +88,147 @@ export class FormDialogComponent implements OnInit{
 
     onSaveClick(): void {
         this.flashMessage = null;
-        if (this.addForm.value!) {
-            this.addForm.enable();
-            this._fuseConfirmationService.open({
-                "title": "กรุณาระบุข้อมูล",
-                "message": "กรุณาระบุข้อมูลให้ครบถ้วน",
+        // Open the confirmation dialog
+        if(this.data) {
+            const confirmation = this._fuseConfirmationService.open({
+                "title": "แก้ไขข้อมูล",
+                "message": "คุณต้องการแก้ไขข้อมูลใช่หรือไม่ ",
                 "icon": {
-                    "show": true,
+                    "show": false,
                     "name": "heroicons_outline:exclamation",
                     "color": "warning"
                 },
                 "actions": {
                     "confirm": {
-                        "show": false,
+                        "show": true,
                         "label": "ยืนยัน",
                         "color": "primary"
                     },
                     "cancel": {
-                        "show": false,
-                        "label": "ยกเลิก",
-
+                        "show": true,
+                        "label": "ยกเลิก"
                     }
                 },
                 "dismissible": true
             });
+    
+            // Subscribe to the confirmation dialog closed action
+            confirmation.afterClosed().subscribe((result) => {
+                if (result === 'confirmed') {
+                    const formData = new FormData();
+                    Object.entries(this.addForm.value).forEach(([key, value]: any[]) => {
+                        formData.append(key, value);
+                    });
 
-            return;
-        }
-        // Open the confirmation dialog
-        const confirmation = this._fuseConfirmationService.open({
-            "title": "เพิ่มข้อมูล",
-            "message": "คุณต้องการเพิ่มข้อมูลใช่หรือไม่ ",
-            "icon": {
-                "show": false,
-                "name": "heroicons_outline:exclamation",
-                "color": "warning"
-            },
-            "actions": {
-                "confirm": {
-                    "show": true,
-                    "label": "ยืนยัน",
-                    "color": "primary"
-                },
-                "cancel": {
-                    "show": true,
-                    "label": "ยกเลิก"
-                }
-            },
-            "dismissible": true
-        });
-
-        // Subscribe to the confirmation dialog closed action
-        confirmation.afterClosed().subscribe((result) => {
-            if (result === 'confirmed') {
-                const updatedData = this.addForm.value;
-                this._service.create(updatedData).subscribe({
-                    next: (resp: any) => {
-                        this.showFlashMessage('success');
-                        this.dialogRef.close(resp);
-                    },
-                    error: (err: any) => {
-                        this.addForm.enable();
-                        this._fuseConfirmationService.open({
-                            "title": "กรุณาระบุข้อมูล",
-                            "message": err.error.message,
-                            "icon": {
-                                "show": true,
-                                "name": "heroicons_outline:exclamation",
-                                "color": "warning"
-                            },
-                            "actions": {
-                                "confirm": {
-                                    "show": false,
-                                    "label": "ยืนยัน",
-                                    "color": "primary"
-                                },
-                                "cancel": {
-                                    "show": false,
-                                    "label": "ยกเลิก",
-
-                                }
-                            },
-                            "dismissible": true
-                        });
+                    for (var i = 0; i < this.files.length; i++) {
+                        formData.append('image', this.files[i]);
                     }
-                })
-            }
-        })
+                    this._service.update(formData).subscribe({
+                        next: (resp: any) => {
+                            this.showFlashMessage('success');
+                            this.dialogRef.close(resp);
+                        },
+                        error: (err: any) => {
+                            this.addForm.enable();
+                            this._fuseConfirmationService.open({
+                                "title": "กรุณาระบุข้อมูล",
+                                "message": err.error.message,
+                                "icon": {
+                                    "show": true,
+                                    "name": "heroicons_outline:exclamation",
+                                    "color": "warning"
+                                },
+                                "actions": {
+                                    "confirm": {
+                                        "show": false,
+                                        "label": "ยืนยัน",
+                                        "color": "primary"
+                                    },
+                                    "cancel": {
+                                        "show": false,
+                                        "label": "ยกเลิก",
+    
+                                    }
+                                },
+                                "dismissible": true
+                            });
+                        }
+                    })
+                }
+            })
+        } else {
+            const confirmation = this._fuseConfirmationService.open({
+                "title": "เพิ่มข้อมูล",
+                "message": "คุณต้องการเพิ่มข้อมูลใช่หรือไม่ ",
+                "icon": {
+                    "show": false,
+                    "name": "heroicons_outline:exclamation",
+                    "color": "warning"
+                },
+                "actions": {
+                    "confirm": {
+                        "show": true,
+                        "label": "ยืนยัน",
+                        "color": "primary"
+                    },
+                    "cancel": {
+                        "show": true,
+                        "label": "ยกเลิก"
+                    }
+                },
+                "dismissible": true
+            });
+    
+            // Subscribe to the confirmation dialog closed action
+            confirmation.afterClosed().subscribe((result) => {
+                if (result === 'confirmed') {
+    
+                    const formData = new FormData();
+                    Object.entries(this.addForm.value).forEach(([key, value]: any[]) => {
+                        formData.append(key, value);
+                    });
+
+                    for (var i = 0; i < this.files.length; i++) {
+                        formData.append('image', this.files[i]);
+                    }
+                    this._service.create(formData).subscribe({
+                        next: (resp: any) => {
+                            this.showFlashMessage('success');
+                            this.dialogRef.close(resp);
+                        },
+                        error: (err: any) => {
+                            this.addForm.enable();
+                            this._fuseConfirmationService.open({
+                                "title": "กรุณาระบุข้อมูล",
+                                "message": err.error.message,
+                                "icon": {
+                                    "show": true,
+                                    "name": "heroicons_outline:exclamation",
+                                    "color": "warning"
+                                },
+                                "actions": {
+                                    "confirm": {
+                                        "show": false,
+                                        "label": "ยืนยัน",
+                                        "color": "primary"
+                                    },
+                                    "cancel": {
+                                        "show": false,
+                                        "label": "ยกเลิก",
+    
+                                    }
+                                },
+                                "dismissible": true
+                            });
+                        }
+                    })
+                }
+            })
+        }
+    
 
 
-        // แสดง Snackbar ข้อความ "complete"
+      
 
     }
 
@@ -188,6 +254,18 @@ export class FormDialogComponent implements OnInit{
             // Mark for check
             this._changeDetectorRef.markForCheck();
         }, 3000);
+    }
+
+    files: File[] = [];
+    onSelect(event: { addedFiles: File[] }): void {
+        this.files.push(...event.addedFiles);
+    }
+
+    onRemove(file: File): void {
+        const index = this.files.indexOf(file);
+        if (index >= 0) {
+            this.files.splice(index, 1);
+        }
     }
 
 }

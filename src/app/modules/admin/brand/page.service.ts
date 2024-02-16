@@ -48,7 +48,7 @@ export class PageService {
 
     create(data: FormData): Observable<any> {
         return this._httpClient
-            .post<any>(environment.baseURL + '/api/permission', data)
+            .post<any>(environment.baseURL + '/api/brand', data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -56,9 +56,9 @@ export class PageService {
             );
     }
 
-    update(data: any, id: any): Observable<any> {
+    update(data: any): Observable<any> {
         return this._httpClient
-            .put<any>(environment.baseURL + '/api/permission/' + id, data)
+            .post<any>(environment.baseURL + '/api/update_brand', data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -68,8 +68,7 @@ export class PageService {
 
     delete(id: any): Observable<any> {
         return this._httpClient.delete<any>(
-            environment.baseURL + '/api/permission/' + id,
-            { headers: this.httpOptionsFormdata.headers }
+            environment.baseURL + '/api/brand/' + id,
         );
     }
 
@@ -84,6 +83,16 @@ export class PageService {
     getPosition(): Observable<any> {
         return this._httpClient
             .get<any>(environment.baseURL + '/api/positions')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+
+    getById(id: string): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/brand/' + id)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -113,9 +122,22 @@ export class PageService {
     getPage(dataTablesParameters: any): Observable<DataTablesResponse> {
         return this._httpClient
             .post(
-                environment.baseURL + '/api/permission_page',
+                environment.baseURL + '/api/brand_page',
                 dataTablesParameters,
-                this.httpOptionsFormdata
+            )
+            .pipe(
+                switchMap((response: any) => {
+                    return of(response.data);
+                })
+            );
+    }
+
+
+    getPageBrandModel(dataTablesParameters: any): Observable<DataTablesResponse> {
+        return this._httpClient
+            .post(
+                environment.baseURL + '/api/brand_model_page',
+                dataTablesParameters,
             )
             .pipe(
                 switchMap((response: any) => {

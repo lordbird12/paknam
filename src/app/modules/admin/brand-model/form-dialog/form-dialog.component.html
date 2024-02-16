@@ -1,13 +1,33 @@
 <div class="md:max-w-lg mx-auto">
-    <h1 mat-dialog-title class="text-xl font-semibold mb-4 ml-5">เพิ่มตำแหน่ง</h1>
+    <h1 mat-dialog-title class="text-xl font-semibold mb-4 ml-5" *ngIf="!data">เพิ่มยี่ห้อ</h1>
+    <h1 mat-dialog-title class="text-xl font-semibold mb-4 ml-5" *ngIf="data">แก้ไขยี่ห้อ</h1>
     <div mat-dialog-content class="max-h-96 overflow-y-auto md:max-h-180">
         <form [formGroup]="addForm">
             <div class="flex-auto">
                 <div class="flex flex-col mx-3 md:flex mb-6">
                     <div class="md:w-full px-3">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ชื่อตำแหน่ง</mat-label>
-                            <input matInput [placeholder]="'กรุณาระบุชื่อตำแหน่ง'" formControlName="name">
+                            <mat-label>ยี่ห้อ</mat-label>
+                            <mat-select [formControlName]="'brand_id'">
+                                <mat-option [value]="''">
+                                    <span>เลือกยี่ห้อ</span>
+                                </mat-option>
+                                <mat-option 
+                                *ngFor="let item of brand"
+                                [value]="'id'">{{item.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="md:w-full px-3">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>ชื่อรุ่น</mat-label>
+                            <input matInput [placeholder]="'กรุณาระบุชื่อยี่ห้อ'" formControlName="name">
+                        </mat-form-field>
+                    </div>
+                    <div class="md:w-full px-3">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>รายละเอียด</mat-label>
+                            <input matInput [placeholder]="'กรุณาระบุรายละเอียด'" formControlName="detail">
                         </mat-form-field>
                     </div>
                 </div>
