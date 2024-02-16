@@ -162,9 +162,29 @@ export class PageService {
                 })
             );
     }
-    getProduct(): Observable<any> {
+    getProduct($brand_model_id): Observable<any> {
         return this._httpClient
-            .get<any>(environment.baseURL + '/api/get_product')
+            .get<any>(environment.baseURL + '/api/get_product/'+$brand_model_id)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+
+    getBrand(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_brand')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+
+    getBrandModel($brand_id): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_brand_model/'+$brand_id)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -181,4 +201,5 @@ export class PageService {
                 })
             );
     }
+
 }

@@ -41,12 +41,15 @@ export class FormComponent implements OnInit {
     clientData: any[] = [];
     finanaceData: any[] = [];
     productData: any[] = [];
+    brandData: any[] = [];
+    brandModelData: any[] = [];
     paymentData: any[] = [];
     claimData: any[] = [];
     itemData: any;
     total: number;
     Id: number;
     claimId: number;
+    product_select:any;
     saleType: any[] = [
         {
             code: 'Installment_with_finance',
@@ -62,7 +65,7 @@ export class FormComponent implements OnInit {
         },
 
     ];
-    form: FormGroup;
+    formData: FormGroup;
     /**
      * Constructor
      */
@@ -77,7 +80,7 @@ export class FormComponent implements OnInit {
     ) {
 
 
-        this.form = this._fb.group({
+        this.formData = this._fb.group({
             date: '',
             client_id: '',
             total_price: '',
@@ -101,9 +104,11 @@ export class FormComponent implements OnInit {
         this._service.getFinanace().subscribe((resp: any) => {
             this.finanaceData = resp.data
         });
-        this._service.getProduct().subscribe((resp: any) => {
-            this.productData = resp.data
+      
+        this._service.getBrand().subscribe((resp: any) => {
+            this.brandData = resp.data
         });
+       
         console.log(this._router.url)
         if(this._router.url !== '/admin/sales/form') {
             this.activatedRoute.params.subscribe(params => {
@@ -116,7 +121,7 @@ export class FormComponent implements OnInit {
 
                     this.claimId = resp.data.orders.product_id
                     this.total = this.paymentData.reduce((sum, current) => sum + (+current.price), 0);
-                    this.form.patchValue({
+                    this.formData.patchValue({
                         ...this.itemData
                     });
                     this._service.getClaim(this.claimId).subscribe((res: any)=>{
@@ -155,18 +160,30 @@ export class FormComponent implements OnInit {
     }
 
     selectProduct(item: any): void {
-        console.log(item);
-        let data = this.productData.find(product=> product.code === item)
-        console.log(data);
-        this.form.patchValue({
+        this.product_select = this.productData.find(product=> product.code === item)
+        console.log(this.product_select);
+
+        this.formData.patchValue({
             product: {
-                product_id: data.id,
-                cost: data.cost,
-                price: data.sale_price,
+                product_id: this.product_select.id,
+                cost: this.product_select.cost,
+                price: this.product_select.sale_price,
             }
         })
-        console.log(this.form.value);
+    }
 
+    selectBrand(item: any): void {
+
+        this._service.getBrandModel(item).subscribe((resp: any) => {
+            this.brandModelData = resp.data
+        });
+
+    }
+
+    selectBrandModel(item: any): void {
+        this._service.getProduct(item).subscribe((resp: any) => {
+            this.productData = resp.data
+        });
     }
 
     onSubmit() : void {
@@ -195,7 +212,7 @@ export class FormComponent implements OnInit {
 
               dialogRef.afterClosed().subscribe((result => {
                 if(result === 'confirmed') {
-                    let formValue = this.form.value;
+                    let formValue = this.formData.value;
                     formValue.date = moment(formValue.date).format('YYYY-MM-DD')
                     this._service.create(formValue).subscribe({
                         next: (resp: any) => {
@@ -250,7 +267,7 @@ export class FormComponent implements OnInit {
                     this.itemData = resp.data;
                     this.paymentData = resp.data.orders.payments;
                     this.total = this.paymentData.reduce((sum, current) => sum + (+current.price), 0);
-                    this.form.patchValue({
+                    this.formData.patchValue({
                         ...this.itemData
                     });
                 });

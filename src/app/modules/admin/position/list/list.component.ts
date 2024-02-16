@@ -1,8 +1,13 @@
-
-
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { CommonModule, NgClass } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    OnInit,
+    ViewChild,
+    ViewEncapsulation,
+} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -47,7 +52,6 @@ import { Router } from '@angular/router';
         DataTablesModule,
     ],
 })
-
 export class ListComponent implements OnInit, AfterViewInit {
     isLoading: boolean = false;
     dtOptions: DataTables.Settings = {};
@@ -60,51 +64,48 @@ export class ListComponent implements OnInit, AfterViewInit {
         private _changeDetectorRef: ChangeDetectorRef,
         private _service: PageService,
         private _router: Router
-    ) {
-
-     }
+    ) {}
 
     ngOnInit() {
         this.loadTable();
-        this._service.getPosition().subscribe((resp: any)=>{
-            this.positions = resp.data
-        })
+        this._service.getPosition().subscribe((resp: any) => {
+            this.positions = resp.data;
+        });
     }
 
     ngAfterViewInit(): void {
         this._changeDetectorRef.detectChanges();
     }
 
-
     // เพิ่มเมธอด editElement(element) และ deleteElement(element)
     editElement(element: any) {
         const dialogRef = this.dialog.open(EditDialogComponent, {
             width: '500px', // กำหนดความกว้างของ Dialog
             data: {
-                    data: element,
-            } // ส่งข้อมูลเริ่มต้นไปยัง Dialog
+                data: element,
+            }, // ส่งข้อมูลเริ่มต้นไปยัง Dialog
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 // เมื่อ Dialog ถูกปิด ดำเนินการตามผลลัพธ์ที่คุณได้รับจาก Dialog
             }
         });
     }
     addElement() {
-        this._router.navigate(['admin/permission/form'])
+        this._router.navigate(['admin/permission/form']);
     }
 
     pages = { current_page: 1, last_page: 1, per_page: 10, begin: 0 };
     loadTable(): void {
         const that = this;
         this.dtOptions = {
-            pagingType: "full_numbers",
+            pagingType: 'full_numbers',
             pageLength: 25,
             serverSide: true,
             processing: true,
             language: {
-                url: "https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json",
+                url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json',
             },
             ajax: (dataTablesParameters: any, callback) => {
                 dataTablesParameters.status = null;
@@ -122,21 +123,20 @@ export class ListComponent implements OnInit, AfterViewInit {
                         this.pages.begin = 0;
                     }
 
-                    callback({
-                        recordsTotal: resp.data.total,
-                        recordsFiltered: resp.data.total,
-                        data: [],
+                        callback({
+                            recordsTotal: resp.total,
+                            recordsFiltered: resp.total,
+                            data: [],
+                        });
+                        this._changeDetectorRef.markForCheck();
                     });
-                    this._changeDetectorRef.markForCheck();
-                });
             },
             columns: [
-                { data: 'action',orderable: false },
+                { data: 'action', orderable: false },
                 { data: 'No' },
                 { data: 'name' },
                 { data: 'create_by' },
                 { data: 'created_at' },
-
             ],
         };
     }
@@ -145,5 +145,3 @@ export class ListComponent implements OnInit, AfterViewInit {
         // เขียนโค้ดสำหรับการลบออกองคุณ
     }
 }
-
-
