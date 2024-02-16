@@ -10,60 +10,60 @@
             <!-- Title -->
             <div class="flex flex-row mt-2 justify-between">
                 <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                    แก้ไขคลังสินค้า
+                    แก้ไขสิทธิ์การใช้งาน
                 </h2>
-                <div class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                    <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="addElement()">
-                        <mat-icon>person_add</mat-icon>
-                        &nbsp;
-                        เพิ่มคลังสินค้า
-                    </button>
-                </div>
             </div>
         </div>
     </div>
 
+
     <!-- Main -->
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg m-10  bg-white">
-        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-            รายการชั้นเก็บสินค้า
-        </h2>
-        <div class="flex flex-col flex-auto p-5  sm:overflow-y-auto">
-            <table datatable [dtOptions]="dtOptions"
-                class="table row-border hover w-full bg-white whitespace-nowrap">
-                <thead>
-                    <tr>
-                        <th class="w-[100px]">จัดการ</th>
-                        <th class="w-[10px]">ลำดับ</th>
-                        <th>ชื่อคลังสินค้า</th>
-                        <th>รูป</th>
-                        <th>สร้างโดย</th>
-                        <th>วันที่สร้าง</th>
-                    </tr>
-                </thead>
-                <tbody *ngIf="dataRow?.length != 0">
-                    <tr *ngFor="let item of dataRow; let i = index">
-                        <td>
-                            <button mat-icon-button color="accent" (click)="editElement(item)">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                            <button mat-icon-button color="accent" (click)="deleteElement(item)">
-                                <mat-icon>delete</mat-icon>
-                            </button>
-                        </td>
-                        <td>{{ pages.begin + (i + 1) }}</td>
-                        <td>{{ item.name ? item.name : "-" }}</td>
-                        <td>{{ item.name ? item.name : "-" }}</td>
-                        <td>{{ item.create_by ? item.create_by : "-" }}</td>
-                        <td>{{ item.created_at !== null ? (item.created_at | date : "dd-MM-yy, HH:mm"): "-"}}</td>
-                    </tr>
-                </tbody>
-                <tbody *ngIf="dataRow?.length == 0">
-                    <tr>
-                        <td colspan="7" class="no-data-available text-center">ไม่มีข้อมูล !</td>
-                    </tr>
-                </tbody>
-            </table>
+    <form [formGroup]="formData">
+        <div class="flex-auto p-6 sm:p-10">
+            <div class="grid gap-4 w-full sm:grid-cols-1 md:grid-cols-1">
+                <div class="bg-card rounded-2xl md:shadow overflow-hidden px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
+
+                    <div class="flex flex-col w-full lg:w-2/4 sm:pl-8">
+                        <mat-form-field class="w-full">
+                            <mat-label class=" font-bold mb-2">Name</mat-label>
+
+                            <input matInput [formControlName]="'name'">
+                        </mat-form-field>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-5 p-8" formArrayName="menu">
+                        <div class=" flex flex-col w-full lg:w-full sm:pl-8 my-2"
+                            *ngFor="depo; of: permission().controls; let i = index" [formGroupName]="i">
+                            <section class="example-section">
+                                <h4 class="text-2xl font-bold">{{this.formData.value.menu[i].name}}</h4>
+                                &nbsp;
+                                &nbsp;
+                                <p><mat-checkbox name="SelectAll" formControlName="select_all"
+                                        (change)="toggleAllSelection($event, i)">ทั้งหมด</mat-checkbox></p>
+                                &nbsp;
+                                <p><mat-checkbox formControlName="view">มองเห็น</mat-checkbox></p>
+                                &nbsp;
+                                <p><mat-checkbox formControlName="save">บันทึก</mat-checkbox></p>
+                                &nbsp;
+                                <p><mat-checkbox formControlName="edit">แก้ไข</mat-checkbox></p>
+                                &nbsp;
+                                <p><mat-checkbox formControlName="delete">ลบ</mat-checkbox></p>
+                            </section>
+                        </div>
+                    </div>
+                    <div mat-dialog-actions class="flex justify-end mt-2">
+                        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="update()">
+                            ตกลง
+                        </button>
+                        <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="backTo()">
+                            ยกเลิก
+                        </button>
+                    </div>
+                </div>
+
+
+
+            </div>
         </div>
-    </div>
+    </form>
 </div>

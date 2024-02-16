@@ -1,34 +1,51 @@
-
-
+import {
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
+import {
+    FormArray,
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+    Validators,
+} from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { Subject } from 'rxjs';
+import { fuseAnimations } from '@fuse/animations';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from 'environments/environment';
+import { AuthService } from 'app/core/auth/auth.service';
+import { PermissionService } from '../service/permission.service';
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { CommonModule, NgClass } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgClass, CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
-import { FormDialogComponent } from '../form-dialog/form-dialog.component';
-import { PageService } from '../page.service';
-import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
-import { DataTablesModule } from 'angular-datatables';
-import { Router } from '@angular/router';
+import { NgxDropzoneModule } from 'ngx-dropzone';
+// import { ImportOSMComponent } from '../card/import-osm/import-osm.component';
 
 @Component({
-    selector: 'warehouse-edit',
+    selector: 'edit',
     templateUrl: './edit.component.html',
-    encapsulation: ViewEncapsulation.None,
+    styleUrls: ['./edit.component.scss'],
+    animations: fuseAnimations,
     standalone: true,
     imports: [
-        CommonModule,
         MatIconModule,
         FormsModule,
         MatFormFieldModule,
@@ -42,127 +59,334 @@ import { Router } from '@angular/router';
         MatOptionModule,
         MatChipsModule,
         MatDatepickerModule,
-        MatPaginatorModule,
-        MatTableModule,
-        DataTablesModule
+        CommonModule,
+        NgxDropzoneModule,
     ],
 })
-
-export class EditComponent implements OnInit, AfterViewInit {
-    isLoading: boolean = false;
-    dtOptions: DataTables.Settings = {};
-    positions: any[];
+export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild(MatPaginator) private _paginator: MatPaginator;
+    @ViewChild(MatSort) private _sort: MatSort;
+    public UserAppove: any = [];
+    public dtOptions: DataTables.Settings = {};
     public dataRow: any[];
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    constructor(
-        private dialog: MatDialog,
-        private _changeDetectorRef: ChangeDetectorRef,
-        private _service: PageService,
-        private _router : Router
+    itemData: any = [];
+    MemberType: any = [];
+    MenuList: any = [];
+    ListMenuData: any = [];
+    PermissionData: any = [];
+    files: File[] = [];
+    files1: File[] = [];
+    statusData: any = [
+        { value: 1, name: 'เปิดใช้งาน' },
+        { value: 0, name: 'ปิดใช้งาน' },
+    ];
 
-    ) {
+    Id: any;
+    PermissionName: any;
+    PropertyType: any = [];
 
-     }
+    formData: FormGroup;
+    flashErrorMessage: string;
+    flashMessage: 'success' | 'error' | null = null;
+    isLoading: boolean = false;
+    searchInputControl: FormControl = new FormControl();
+    selectedProduct: any | null = null;
+    filterForm: FormGroup;
+    tagsEditMode: boolean = false;
+    private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-    ngOnInit() {
-        this.loadTable();
-
-    }
-
-    ngAfterViewInit(): void {
-        this._changeDetectorRef.detectChanges();
-    }
-
-
-    // เพิ่มเมธอด editElement(element) และ deleteElement(element)
-    editElement(element: any) {
-        const dialogRef = this.dialog.open(EditDialogComponent, {
-            width: '400px', // กำหนดความกว้างของ Dialog
-            data: {
-                    data: element,
-                    position: this.positions
-            } // ส่งข้อมูลเริ่มต้นไปยัง Dialog
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                // เมื่อ Dialog ถูกปิด ดำเนินการตามผลลัพธ์ที่คุณได้รับจาก Dialog
-            }
-        });
-    }
-    addElement() {
-        const dialogRef = this.dialog.open(FormDialogComponent, {
-            width: '500px', // กำหนดความกว้างของ Dialog
-
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                //    console.log(result,'result')
-            }
-        });
-    }
-
-    pages = { current_page: 1, last_page: 1, per_page: 10, begin: 0 };
-    loadTable(): void {
-        const that = this;
-        this.dtOptions = {
-            pagingType: "full_numbers",
-            pageLength: 25,
-            serverSide: true,
-            processing: true,
-            language: {
-                url: "https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json",
-            },
-            ajax: (dataTablesParameters: any, callback) => {
-                dataTablesParameters.status = null;
-                that._service.getPage(dataTablesParameters).subscribe((resp: any) => {
-                    this.dataRow = resp.data.data;
-                    this.pages.current_page = resp.data.current_page;
-                    this.pages.last_page = resp.data.last_page;
-                    this.pages.per_page = resp.data.per_page;
-                    if (resp.data.currentPage > 1) {
-                        this.pages.begin =
-                            parseInt(resp.data.itemsPerPage) *
-                            (parseInt(resp.data.currentPage) - 1);
-                    } else {
-                        this.pages.begin = 0;
-                    }
-
-                    callback({
-                        recordsTotal: resp.data.total,
-                        recordsFiltered: resp.data.total,
-                        data: [],
-                    });
-                    this._changeDetectorRef.markForCheck();
-                });
-            },
-            columns: [
-                { data: 'action',orderable: false },
-                { data: 'No' },
-                { data: 'name' },
-                { data: 'picture' },
-                { data: 'create_by' },
-                { data: 'created_at' },
-
-            ],
-        };
-    }
-
-    deleteElement() {
-        // เขียนโค้ดสำหรับการลบออกองคุณ
-    }
-
-    // handlePageEvent(event) {
-    //     this.loadData(event.pageIndex + 1, event.pageSize);
+    // me: any | null;
+    // get roleType(): string {
+    //     return 'marketing';
     // }
 
+    supplierId: string | null;
 
+    /**
+     * Constructor
+     */
+    constructor(
+        private _changeDetectorRef: ChangeDetectorRef,
+        private _fuseConfirmationService: FuseConfirmationService,
+        private _formBuilder: FormBuilder,
+        private _Service: PermissionService,
+        private _matDialog: MatDialog,
+        private _router: Router,
+        private _activatedRoute: ActivatedRoute,
+        private _authService: AuthService
+    ) {
+        this.formData = this._formBuilder.group({
+            name: '',
+            menu: this._formBuilder.array([]),
+        });
+    }
 
+    // -----------------------------------------------------------------------------------------------------
+    // @ Lifecycle hooks
+    // -----------------------------------------------------------------------------------------------------
 
+    /**
+     * On init
+     */
+    // async ngOnInit(): Promise<void> {
 
+    //     this.Id = this._activatedRoute.snapshot.paramMap.get('id');
 
+    //     // resp การดึงข้อมูล
+    //     // this._Service.getById(this.Id).subscribe((resp: any) => {
+    //     //     console.log(resp.data);
 
+    //     //     //การนำข้อมูลใส่ในช่องแก้ไข
+    //     //     this.formData.patchValue({
+
+    //     //         name: resp.data.name,
+    //     //         description: resp.data.description
+    //     //     });
+    //     // });
+    // }
+
+    async ngOnInit(): Promise<void> {
+        await this.GetPermissionMenuShow();
+        this.Id = this._activatedRoute.snapshot.paramMap.get('id');
+        //   this.userId = this.Id;
+        this.getUserById(this.Id);
+    }
+
+    /**
+     * After view init
+     */
+    ngAfterViewInit(): void {}
+
+    /**
+     * On destroy
+     */
+    ngOnDestroy(): void {
+        // Unsubscribe from all subscriptions
+    }
+
+    update(): void {
+        const confirmation = this._fuseConfirmationService.open({
+            title: 'แก้ไขข้อมูล',
+            message: 'คุณต้องการแก้ไขข้อมูลใช่หรือไม่ ?',
+            icon: {
+                show: false,
+                name: 'heroicons_outline:exclamation',
+                color: 'warning',
+            },
+            actions: {
+                confirm: {
+                    show: true,
+                    label: 'ตกลง',
+                    color: 'primary',
+                },
+                cancel: {
+                    show: true,
+                    label: 'ยกเลิก',
+                },
+            },
+            dismissible: true,
+        });
+
+        // Subscribe to the confirmation dialog closed action
+        confirmation.afterClosed().subscribe((result) => {
+            // If the confirm button pressed...
+            if (result === 'confirmed') {
+                console.log(this.formData.value);
+                this._Service.update(this.formData.value, this.Id).subscribe({
+                    next: (resp: any) => {
+                        this._router
+                            .navigateByUrl('admin/permission/list')
+                            .then(() => {});
+                    },
+
+                    error: (err: any) => {
+                        this.formData.enable();
+                        this._fuseConfirmationService.open({
+                            title: 'เกิดข้อผิดพลาด',
+                            message: err.error.message,
+                            icon: {
+                                show: true,
+                                name: 'heroicons_outline:exclamation',
+                                color: 'warning',
+                            },
+                            actions: {
+                                confirm: {
+                                    show: false,
+                                    label: 'ตกลง',
+                                    color: 'primary',
+                                },
+                                cancel: {
+                                    show: false,
+                                    label: 'ยกเลิก',
+                                },
+                            },
+                            dismissible: true,
+                        });
+                        console.log(err.error.message);
+                    },
+                });
+            }
+        });
+    }
+
+    showFlashMessage(type: 'success' | 'error'): void {
+        // Show the message
+        this.flashMessage = type;
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+
+        // Hide it after 3 seconds
+        setTimeout(() => {
+            this.flashMessage = null;
+
+            // Mark for check
+            this._changeDetectorRef.markForCheck();
+        }, 3000);
+    }
+
+    GetPermissionDatabyId(id): void {
+        this.MenuList = [];
+        this._Service.getById(id).subscribe((resp) => {
+            this.formData = resp.data;
+            // console.log('GetPermissionData ', this.GetPermissionData);
+            if (this.formData.value.menu) {
+                this.formData.value.menu.forEach((element) => {
+                    if (element.name) {
+                        this.MenuList.push(element.name);
+                    }
+                });
+            }
+        });
+    }
+
+    CheckPermission(event): void {
+        if (event.target.checked === true) {
+            console.log(this.MenuList);
+            this.MenuList.push(event.target.value);
+            this.formData.value.patchValue({
+                menu_name: this.MenuList,
+            });
+        } else {
+            this.MenuList = this.MenuList.filter(
+                (item) => item !== event.target.value
+            );
+        }
+    }
+
+    permission(): FormArray {
+        return this.formData.get('menu') as FormArray;
+    }
+    backTo() {
+        this._router.navigate(['admin/permission/list']);
+    }
+    newPermission(): FormGroup {
+        return this._formBuilder.group({
+            name: '',
+            menu_id: '',
+            view: '',
+            save: '',
+            edit: '',
+            delete: '',
+        });
+    }
+
+    addPermission(): void {
+        this.permission().push(this.newPermission());
+    }
+
+    removePermission(i: number): void {
+        this.permission().removeAt(i);
+    }
+
+    async GetPermissionMenuShow(): Promise<void> {
+        console.log(1);
+        const resp = await this._Service.getAllMenu().toPromise();
+        this.ListMenuData = resp;
+        for (const menu of this.ListMenuData) {
+            let item = this._formBuilder.group({
+                id: '',
+                select_all: false,
+                name: menu.name,
+                menu_id: menu.id,
+                view: false,
+                save: false,
+                edit: false,
+                delete: false,
+            });
+            this.permission().push(item);
+        }
+
+        console.log(this.formData.value);
+    }
+    GetById(id): void {
+        this._Service.getById(id).subscribe((resp) => {
+            this.PermissionName = resp.data;
+            this.formData.patchValue({
+                name: this.PermissionName.name,
+            });
+        });
+    }
+
+    getUserById(id: any): void {
+        this.GetById(id);
+        let data = parseInt(id);
+        this._Service.getById(id).subscribe((resp) => {
+            this.PermissionData = resp.data.menus;
+            console.log('PermissionData', this.PermissionData);
+
+            for (
+                let index = 0;
+                index < this.formData.value.menu.length;
+                index++
+            ) {
+                const MenuControl = this.formData.controls['menu']['controls'][
+                    index
+                ] as FormGroup;
+                console.log('PermissionData', this.PermissionData);
+                for (let j = 0; j < this.PermissionData.length; j++) {
+                    if (
+                        MenuControl.value.menu_id ===
+                        this.PermissionData[j].menu_id
+                    ) {
+                        MenuControl.patchValue({
+                            ...this.PermissionData[j],
+                        });
+                        if (
+                            this.PermissionData[j].delete === 1 &&
+                            this.PermissionData[j].view === 1 &&
+                            this.PermissionData[j].save === 1 &&
+                            this.PermissionData[j].edit === 1
+                        ) {
+                            MenuControl.patchValue({
+                                select_all: true,
+                            });
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    toggleAllSelection(data, i) {
+        console.log(data.checked);
+        let item = this.formData.value.menu;
+        if (data.checked === true) {
+            item[i] = {
+                view: true,
+                save: true,
+                edit: true,
+                delete: true,
+            };
+            this.formData.controls.menu.patchValue(item);
+        } else {
+            item[i] = {
+                view: false,
+                save: false,
+                edit: false,
+                delete: false,
+            };
+            this.formData.controls.menu.patchValue(item);
+        }
+    }
 }
-
-
