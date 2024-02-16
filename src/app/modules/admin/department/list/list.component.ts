@@ -110,21 +110,19 @@ export class ListComponent implements OnInit, AfterViewInit {
                 dataTablesParameters.status = null;
                 that._service.getPage(dataTablesParameters).subscribe((resp: any) => {
                     this.dataRow = resp.data;
-                    // console.log('111',this.dataRow)
-                    this.pages.current_page = resp.data.current_page;
-                    this.pages.last_page = resp.data.last_page;
-                    this.pages.per_page = resp.data.per_page;
-                    if (resp.data.currentPage > 1) {
+                    this.pages.current_page = resp.current_page;
+                    this.pages.last_page = resp.last_page;
+                    this.pages.per_page = resp.per_page;
+                    if (resp.current_page > 1) {
                         this.pages.begin =
-                            parseInt(resp.data.itemsPerPage) *
-                            (parseInt(resp.data.currentPage) - 1);
+                            resp.per_page * resp.current_page - 1;
                     } else {
                         this.pages.begin = 0;
                     }
 
                     callback({
-                        recordsTotal: resp.data.total,
-                        recordsFiltered: resp.data.total,
+                        recordsTotal: resp.total,
+                        recordsFiltered: resp.total,
                         data: [],
                     });
                     this._changeDetectorRef.markForCheck();
