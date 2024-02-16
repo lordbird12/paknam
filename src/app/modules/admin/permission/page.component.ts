@@ -1,20 +1,21 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    ViewEncapsulation,
+} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-    selector       : 'page',
-    templateUrl    : './page.component.html',
-    encapsulation  : ViewEncapsulation.None,
+    selector: 'page',
+    templateUrl: './page.component.html',
+    encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone     : true,
-    imports        : [RouterOutlet],
+    standalone: true,
+    imports: [RouterOutlet],
 })
-export class PageComponent
-{
+export class PageComponent {
     /**
      * Constructor
      */
-    constructor()
-    {
-    }
+    constructor() {}
 }

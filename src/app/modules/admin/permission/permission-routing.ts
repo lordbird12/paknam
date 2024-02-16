@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
-import { PageComponent } from './page.component';
+
 import { ListComponent } from './list/list.component';
 import { FormComponent } from './form/form.component';
+import { PageComponent } from './page.component';
 
 export default [
     // {
@@ -10,13 +11,13 @@ export default [
     //     redirectTo: 'quotation',
     // },
     {
-        path     : '',
+        path: '',
         component: PageComponent,
-        children : [
+        children: [
             {
-                path     : 'list',
+                path: 'list',
                 component: ListComponent,
-                resolve  : {
+                resolve: {
                     // brands    : () => inject(InventoryService).getBrands(),
                     // categories: () => inject(InventoryService).getCategories(),
                     // products  : () => inject(InventoryService).getProducts(),
@@ -27,13 +28,30 @@ export default [
         ],
     },
     {
-        path     : '',
+        path: '',
         component: PageComponent,
-        children : [
+        children: [
             {
-                path     : 'form',
+                path: 'form',
                 component: FormComponent,
-                resolve  : {
+                resolve: {
+                    // brands    : () => inject(InventoryService).getBrands(),
+                    // categories: () => inject(InventoryService).getCategories(),
+                    // products  : () => inject(InventoryService).getProducts(),
+                    // tags      : () => inject(InventoryService).getTags(),
+                    // vendors   : () => inject(InventoryService).getVendors(),
+                },
+            },
+        ],
+    },
+    {
+        path: '',
+        component: PageComponent,
+        children: [
+            {
+                path: 'edit/:id',
+                component: FormComponent,
+                resolve: {
                     // brands    : () => inject(InventoryService).getBrands(),
                     // categories: () => inject(InventoryService).getCategories(),
                     // products  : () => inject(InventoryService).getProducts(),
