@@ -30,7 +30,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { PageService } from '../page.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { NgxDropzoneModule } from 'ngx-dropzone';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin, lastValueFrom } from 'rxjs';
 
 @Component({
     selector: 'form-employee',
@@ -71,26 +72,22 @@ export class FormComponent implements OnInit {
     permissions: any[];
     flashMessage: 'success' | 'error' | null = null;
     selectedFile: File = null;
+    Id: any;
+    itemData: any;
+    url_image: string;
     constructor(
         private formBuilder: FormBuilder,
         private _service: PageService,
         private _fuseConfirmationService: FuseConfirmationService,
         private _changeDetectorRef: ChangeDetectorRef,
-        private _router: Router
+        private _router: Router,
+        public activatedRoute: ActivatedRoute,
     ) {
-        this._service.getPermission().subscribe((resp: any) => {
-            this.permissions = resp.data;
-        });
 
-        this._service.getDepartment().subscribe((resp: any) => {
-            this.departments = resp.data;
-        });
+        this.Id = this.activatedRoute.snapshot.paramMap.get('id');
 
-        this._service.getPosition().subscribe((resp: any) => {
-            this.positions = resp.data;
-        });
-    }
-    ngOnInit(): void {
+
+
         this.addForm = this.formBuilder.group({
             permission_id: [],
             department_id: [],
@@ -118,6 +115,37 @@ export class FormComponent implements OnInit {
             user_no: [],
             ot: [],
         });
+    }
+
+
+    async ngOnInit(): Promise<void> {
+        let response = await lastValueFrom(
+            forkJoin({
+                permissions: this._service.getPermission(),
+                departments: this._service.getDepartment(),
+                positions: this._service.getPosition(),
+            })
+        )
+            this.permissions = response.permissions.data;
+            this.departments = response.departments.data;
+            this.positions = response.positions.data;
+
+        if(this.Id) {
+            this._service.getById(this.Id).subscribe((resp: any)=>{
+                this.itemData = resp.data;
+                this.addForm.patchValue({
+                    ...this.itemData,
+                    // permission_id: this.itemData.permission_id,
+                    department_id: +this.itemData.department_id,
+                    position_id: +this.itemData.position_id,
+                })
+                this.addForm2.patchValue({
+                    ...this.itemData
+                })
+                this.url_image = this.itemData.image
+            })
+        }
+  
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -149,33 +177,6 @@ export class FormComponent implements OnInit {
 
     onSaveClick(): void {
         this.flashMessage = null;
-        // if (this.addForm.value!) {
-        //     this.addForm.enable();
-        //     this._fuseConfirmationService.open({
-        //         title: 'กรุณาระบุข้อมูล',
-        //         message: 'กรุณาระบุข้อมูลให้ครบถ้วน',
-        //         icon: {
-        //             show: true,
-        //             name: 'heroicons_outline:exclamation',
-        //             color: 'warning',
-        //         },
-        //         actions: {
-        //             confirm: {
-        //                 show: false,
-        //                 label: 'ยืนยัน',
-        //                 color: 'primary',
-        //             },
-        //             cancel: {
-        //                 show: false,
-        //                 label: 'ยกเลิก',
-        //             },
-        //         },
-        //         dismissible: true,
-        //     });
-
-        //     return;
-        // }
-
         this.addForm.patchValue({
             user_no: this.addForm2.value.user_no,
             name: this.addForm2.value.name,
@@ -219,7 +220,7 @@ export class FormComponent implements OnInit {
                 this._service.create(formData).subscribe({
                     next: (resp: any) => {
                         this.showFlashMessage('success');
-               
+
                         this._router.navigate(['admin/employee/list'])
 
                     },
@@ -250,7 +251,6 @@ export class FormComponent implements OnInit {
                 });
             }
         });
-
         // แสดง Snackbar ข้อความ "complete"
     }
 
@@ -258,11 +258,6 @@ export class FormComponent implements OnInit {
     url_logo: string;
     onSelect(event: { addedFiles: File[] }): void {
         this.files.push(...event.addedFiles);
-
-        // this.addForm.patchValue({
-        //     image: this.files[0]
-        // })
-
         var reader = new FileReader();
         reader.readAsDataURL(this.files[0]);
         reader.onload = (e: any) => (this.url_logo = e.target.result);
@@ -270,10 +265,19 @@ export class FormComponent implements OnInit {
         this.addForm.patchValue({
             image: file,
         });
+
+        setTimeout(() => {
+            this.flashMessage = null;
+            // Mark for check
+            this._changeDetectorRef.markForCheck();
+        }, 150);
+        
+        this.url_image = null
     }
 
     onRemove(file: File): void {
         const index = this.files.indexOf(file);
+        this.url_image = this.itemData.image;
         if (index >= 0) {
             this.files.splice(index, 1);
         }
