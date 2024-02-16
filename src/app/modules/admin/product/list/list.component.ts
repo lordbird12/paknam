@@ -24,7 +24,7 @@ import { MatTableModule } from '@angular/material/table';
 import { FormDialogComponent } from '../form-dialog/form-dialog.component';
 import { Service } from '../page.service';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
-import { DataTablesModule } from 'angular-datatables';
+import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { Router } from '@angular/router';
 import { PictureComponent } from '../../picture/picture.component';
 
@@ -54,6 +54,8 @@ import { PictureComponent } from '../../picture/picture.component';
     ],
 })
 export class ListComponent implements OnInit, AfterViewInit {
+    @ViewChild(DataTableDirective)
+    dtElement!: DataTableDirective;
     isLoading: boolean = false;
     dtOptions: DataTables.Settings = {};
     positions: any[];
@@ -61,6 +63,7 @@ export class ListComponent implements OnInit, AfterViewInit {
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     itemSupplier: any
     item1Data: any
+    itemBrand: any
     // public dataRow: any[];
     dataRow: any[] = [];
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -71,6 +74,7 @@ export class ListComponent implements OnInit, AfterViewInit {
         private _router: Router,
         private _fb: FormBuilder
     ) {
+        
         this.form = this._fb.group({
             category_product_id: '',
             supplier_id: '',
@@ -80,15 +84,46 @@ export class ListComponent implements OnInit, AfterViewInit {
         })
      }
 
+     getSuppliers(): void {
+        this._service.getSuppliers().subscribe((resp) => {
+            this.itemSupplier = resp.data;
+        });
+    }
+
+    getCategories(): void {
+        this._service.getCategories().subscribe((resp) => {
+            this.item1Data = resp.data;
+        });
+    }
+
+    getBrand(): void {
+        this._service.getBrand().subscribe((resp) => {
+            this.itemBrand = resp.data;
+        });
+    }
     ngOnInit() {
         this.loadTable();
-        this._service.getPosition().subscribe((resp: any) => {
-            this.positions = resp.data;
-        });
+        this.getCategories();
+        this.getBrand();
+        this.getSuppliers();
     }
 
     ngAfterViewInit(): void {
         this._changeDetectorRef.detectChanges();
+    }
+
+    ClearForm() {
+        this.form.reset()
+    }
+
+    search() {
+        this.rerender()
+    }
+
+    rerender(): void {
+        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.ajax.reload();
+        });
     }
 
     // เพิ่มเมธอด editElement(element) และ deleteElement(element)
@@ -125,11 +160,11 @@ export class ListComponent implements OnInit, AfterViewInit {
                 url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json',
             },
             ajax: (dataTablesParameters: any, callback) => {
-                dataTablesParameters.type = null;
-                dataTablesParameters.status = null;
-                dataTablesParameters.category_product_id = null;
-                dataTablesParameters.supplier_id = null;
-                dataTablesParameters.brand_id = null;
+                dataTablesParameters.type = this.form.value.type;
+                dataTablesParameters.status = this.form.value.status;
+                dataTablesParameters.category_product_id = this.form.value.category_product_id;
+                dataTablesParameters.supplier_id = this.form.value.supplier_id;
+                dataTablesParameters.brand_id = this.form.value.brand_id;
                 that._service
                     .getPage(dataTablesParameters)
                     .subscribe((resp: any) => {
