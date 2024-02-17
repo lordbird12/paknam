@@ -149,6 +149,9 @@ export class ListComponent implements OnInit, AfterViewInit {
                 { data: 'No' },
                 { data: 'name' },
                 { data: 'detail' },
+                { data: 'detail' },
+                { data: 'detail' },
+                { data: 'detail' },
                 { data: 'create_by' },
                 { data: 'created_at' },
 
