@@ -128,7 +128,8 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
             image: [''],
             images: [''],
             companie_id: '',
-            area_id: ''
+            area_id: '',
+            mile: ''
         });
         this.formData2 = this._formBuilder.group({
             category_product_id: ['', Validators.required],
@@ -290,6 +291,10 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
         this.files.splice(this.files.indexOf(event), 1);
     }
 
+    onRemove1(event) {
+        this.files1.splice(this.files1.indexOf(event), 1);
+    }
+
     New(): void {
         const confirmation = this._fuseConfirmationService.open({
             title: 'เพิ่มรายการใหม่',
@@ -365,4 +370,9 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         });
     }
+
+    backTo() {
+        this._router.navigate(['admin/product/list'])
+      }
+    
 }
