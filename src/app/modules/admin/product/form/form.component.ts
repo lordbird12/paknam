@@ -14,7 +14,6 @@ import {
     FormGroup,
     FormsModule,
     ReactiveFormsModule,
-    UntypedFormBuilder,
     Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -33,6 +32,7 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { Service } from '../page.service';
 import { CommonModule } from '@angular/common';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { forkJoin, lastValueFrom } from 'rxjs';
 
 @Component({
     selector: 'form-product',
@@ -102,12 +102,10 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
         private _authService: AuthService
-    ) { 
+    ) {
 
         this.Id = this._activatedRoute.snapshot.paramMap.get('id');
-        this._Service.getById(this.Id).subscribe((resp: any)=>{
-            this.itemData = resp.data
-        })
+
         this.formData = this._formBuilder.group({
             category_product_id: ['', Validators.required],
             pr_no: [''],
@@ -158,25 +156,70 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
     // -----------------------------------------------------------------------------------------------------
 
     async ngOnInit(): Promise<void> {
-        this.getCategories();
-        this.getSuppliers();
-        this.getBrand();
-        this.getCompanie();
-        this.getCC();
-        this.getColor();
+        // this.getCategories();
+        // this.getSuppliers();
+        // this.getBrand();
+        // this.getCompanie();
+        // this.getCC();
+        // this.getColor();
+        let response = await lastValueFrom(
+            forkJoin({
+                category: this._Service.getCategories(),
+                supplie: this._Service.getSuppliers(),
+                brand: this._Service.getBrand(),
+                companie: this._Service.getCompanie(),
+                cc: this._Service.getCC(),
+                color: this._Service.getColor()
+            })
+        )
+        this.item1Data = response.category.data;
+        this.itemSupplier = response.supplie.data;
+        this.itemBrand = response.brand.data;
+        this.companie = response.companie.data;
+        this.itemCC = response.cc.data;
+        this.itemColor = response.color.data;
+        
+        if (this.Id) {
+            
+           
+            
+            this._Service.getById(this.Id).subscribe((resp: any) => {
+                this.itemData = resp.data
+                const item = this.companie.find(item => item.id === +this.itemData.area?.companie_id);
+                const brand = this.itemBrand.find(item => item.id === +this.itemData.area?.companie_id);
+                this.areas = item.areas
+                console.log(this.itemData);
+                this._Service.getBrandModel(+this.itemData.brand_id).subscribe((resp) => {
+                    this.itemBrandModel = resp.data;
+                    this.formData.patchValue({
+                        ...this.itemData,
+                        category_product_id: +this.itemData.category_product_id,
+                        supplier_id: +this.itemData.supplier_id,
+                        area_id: +this.itemData.area_id,
+                        brand_id: +this.itemData.brand_id,
+                        brand_model_id: +this.itemData.brand_model_id,
+                        cc_id: +this.itemData.cc_id,
+                        companie_id: +this.itemData.area?.companie_id,
+                        color_id: +this.itemData.color_id,
+                        image: [''],
+                        images: [''],
+                    })
+    
+                    this.formData2.patchValue({
+                        ...this.itemData,
+                        image: [''],
+                        images: [''],
+                    })
+                });
+       
+            })
+        }
 
-        this.formData.patchValue({
-            ...this.itemData,
-            image: [''],
-            images: [''],
-        })
 
-        this.formData2.patchValue({
-            ...this.itemData,
-            image: [''],
-            images: [''],
-        })
-     
+
+
+
+
     }
 
     /**
@@ -263,7 +306,7 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
     somethingCompanie(event: any): void {
         const item = this.companie.find(item => item.id === event.value);
         this.areas = item.areas
- 
+
 
     }
 
@@ -296,83 +339,86 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     New(): void {
-        const confirmation = this._fuseConfirmationService.open({
-            title: 'เพิ่มรายการใหม่',
-            message: 'คุณต้องการเพิ่มรายการใหม่ใช่หรือไม่ ',
-            icon: {
-                show: false,
-                name: 'heroicons_outline:exclamation',
-                color: 'warning',
-            },
-            actions: {
-                confirm: {
-                    show: true,
-                    label: 'ยืนยัน',
-                    color: 'primary',
+        if(this.Id) {
+            const confirmation = this._fuseConfirmationService.open({
+                title: 'แก้ไขข้อมูล',
+                message: 'คุณต้องการแก้ไขข้อมูลใช่หรือไม่ ',
+                icon: {
+                    show: false,
+                    name: 'heroicons_outline:exclamation',
+                    color: 'warning',
                 },
-                cancel: {
-                    show: true,
-                    label: 'ยกเลิก',
+                actions: {
+                    confirm: {
+                        show: true,
+                        label: 'ยืนยัน',
+                        color: 'primary',
+                    },
+                    cancel: {
+                        show: true,
+                        label: 'ยกเลิก',
+                    },
                 },
-            },
-            dismissible: true,
-        });
-
-        // Subscribe to the confirmation dialog closed action
-        confirmation.afterClosed().subscribe((result) => {
-            // If the confirm button pressed...
-            if (result === 'confirmed') {
-                const formData = new FormData();
-                Object.entries(this.formData.value).forEach(
-                    ([key, value]: any[]) => {
-                        formData.append(key, value);
+                dismissible: true,
+            });
+    
+            // Subscribe to the confirmation dialog closed action
+            confirmation.afterClosed().subscribe((result) => {
+                // If the confirm button pressed...
+                if (result === 'confirmed') {
+                    const formData = new FormData();
+                    Object.entries(this.formData.value).forEach(
+                        ([key, value]: any[]) => {
+                            formData.append(key, value);
+                        }
+                    );
+                    for (var i = 0; i < this.files.length; i++) {
+                        formData.append('image', this.files[i]);
                     }
-                );
-                for (var i = 0; i < this.files.length; i++) {
-                    formData.append('image', this.files[i]);
-                }
-
-                for (var i = 0; i < this.files1.length; i++) {
-                    formData.append('images[]', this.files1[i]);
-                }
-
-                this._Service.new(formData).subscribe({
-                    next: (resp: any) => {
-                        this._router
-                            .navigateByUrl('product/list')
-                            .then(() => { });
-                    },
-                    error: (err: any) => {
-                        this._fuseConfirmationService.open({
-                            title: 'กรุณาระบุข้อมูล',
-                            message:
-                                'ไม่สามารถบันทึกข้อมูลได้กรุณาตรวจสอบใหม่อีกครั้ง',
-                            icon: {
-                                show: true,
-                                name: 'heroicons_outline:exclamation',
-                                color: 'warning',
-                            },
-                            actions: {
-                                confirm: {
-                                    show: false,
-                                    label: 'ยืนยัน',
-                                    color: 'primary',
+    
+                    for (var i = 0; i < this.files1.length; i++) {
+                        formData.append('images[]', this.files1[i]);
+                    }
+    
+                    this._Service.update(formData).subscribe({
+                        next: (resp: any) => {
+                            this._router.navigate(['admin/product/list'])
+                        },
+                        error: (err: any) => {
+                            this._fuseConfirmationService.open({
+                                title: 'กรุณาระบุข้อมูล',
+                                message:
+                                    'ไม่สามารถบันทึกข้อมูลได้กรุณาตรวจสอบใหม่อีกครั้ง',
+                                icon: {
+                                    show: true,
+                                    name: 'heroicons_outline:exclamation',
+                                    color: 'warning',
                                 },
-                                cancel: {
-                                    show: false,
-                                    label: 'ยกเลิก',
+                                actions: {
+                                    confirm: {
+                                        show: false,
+                                        label: 'ยืนยัน',
+                                        color: 'primary',
+                                    },
+                                    cancel: {
+                                        show: false,
+                                        label: 'ยกเลิก',
+                                    },
                                 },
-                            },
-                            dismissible: true,
-                        });
-                    },
-                });
-            }
-        });
+                                dismissible: true,
+                            });
+                        },
+                    });
+                }
+            });
+        } else {
+
+        }
+   
     }
 
     backTo() {
         this._router.navigate(['admin/product/list'])
-      }
-    
+    }
+
 }
