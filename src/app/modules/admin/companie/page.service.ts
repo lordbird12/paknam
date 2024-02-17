@@ -115,6 +115,20 @@ export class PageService {
             );
     }
 
+    getPageBranch(dataTablesParameters: any): Observable<DataTablesResponse> {
+        return this._httpClient
+            .post(
+                environment.baseURL + '/api/branch_page',
+                dataTablesParameters,
+                this.httpOptionsFormdata
+            )
+            .pipe(
+                switchMap((response: any) => {
+                    return of(response.data);
+                })
+            );
+    }
+
     getById(id: any): Observable<any> {
         return this._httpClient
             .get<any>(environment.baseURL + '/api/companie/' + id)

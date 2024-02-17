@@ -2,7 +2,7 @@
 
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { CommonModule, NgClass } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -18,7 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { PageService } from '../page.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { DataTablesModule } from 'angular-datatables';
+import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { NgxDropzoneModule } from 'ngx-dropzone';
@@ -62,6 +62,10 @@ export class FormComponent implements OnInit {
   dynamicSubscriptInputWithHint: FormControl = new FormControl('', [Validators.required]);
   itemData: any;
   url_image: string;
+  dtOptions: DataTables.Settings = {};
+  @ViewChild(DataTableDirective)
+  dtElement!: DataTableDirective;
+  dataRow: any[] = [];
   /**
    * Constructor
    */
@@ -98,6 +102,7 @@ export class FormComponent implements OnInit {
         })
         this.url_image = this.itemData.image;
       })
+      this.loadTable()
     }
   }
 
@@ -274,6 +279,53 @@ export class FormComponent implements OnInit {
     if (index >= 0) {
       this.files.splice(index, 1);
     }
+  }
+
+  pages = { current_page: 1, last_page: 1, per_page: 10, begin: 0 };
+  loadTable(): void {
+    const that = this;
+    this.dtOptions = {
+      pagingType: "full_numbers",
+      pageLength: 25,
+      serverSide: true,
+      processing: true,
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json",
+      },
+      ajax: (dataTablesParameters: any, callback) => {
+        dataTablesParameters.status = null;
+        dataTablesParameters.companie_id = +this.Id;
+        that._Service.getPageBranch(dataTablesParameters).subscribe((resp: any) => {
+          this.dataRow = resp.data;
+          this.pages.current_page = resp.current_page;
+          this.pages.last_page = resp.last_page;
+          this.pages.per_page = resp.per_page;
+          if (resp.current_page > 1) {
+            this.pages.begin =
+              parseInt(resp.per_page) *
+              (parseInt(resp.current_page) - 1);
+          } else {
+            this.pages.begin = 0;
+          }
+
+          callback({
+            recordsTotal: resp.total,
+            recordsFiltered: resp.total,
+            data: [],
+          });
+          this._changeDetectorRef.markForCheck();
+        });
+      },
+      columns: [
+        { data: 'action', orderable: false },
+        { data: 'No' },
+        { data: 'name' },
+        { data: 'detail' },
+        { data: 'create_by' },
+        { data: 'created_at' },
+
+      ],
+    };
   }
 }
 
