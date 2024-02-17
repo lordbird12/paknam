@@ -150,8 +150,12 @@ export const appRoutes: Route[] = [
             { path: '**', redirectTo: '404-not-found' },
             //Sales
             {
+              
                 path: 'admin',
                 children: [
+                    { path: 'payroll', loadChildren: () => import('app/modules/admin/payroll/page.routes') },
+                    { path: 'cleam', loadChildren: () => import('app/modules/admin/cleam/page.routes') },
+                    { path: 'payment', loadChildren: () => import('app/modules/admin/payment/page.routes') },
                     {
                         path: 'department',
                         loadChildren: () =>
