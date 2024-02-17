@@ -25,7 +25,7 @@ import { DataTablesResponse } from 'app/shared/datatable.types';
 const token = localStorage.getItem('accessToken') || null;
 
 @Injectable({ providedIn: 'root' })
-export class PageService {
+export class PermissionService {
     // Private
     private _data: BehaviorSubject<any | null> = new BehaviorSubject(null);
 
@@ -55,7 +55,41 @@ export class PageService {
                 })
             );
     }
+    getById(Id: string): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/permission/' + Id)
+            .pipe(
+                catchError(
+                    switchMap((response: any) => {
+                        return of(response.data);
+                    })
+                )
+            );
+    }
+    new(data: any): Observable<any> {
+        return this._httpClient
+            .post(environment.baseURL + 'api/permission', data)
+            .pipe(
+                switchMap((response: any) => {
+                    // Return a new observable with the response
+                    return of(response);
+                })
+            );
+    }
+    getByPermissionId(id: number): Observable<any> {
+        return this._httpClient
+            .post<any>(`${environment.baseURL}api/permission`, {})
+            .pipe(catchError(this.handlerError));
+    }
 
+    handlerError(error): Observable<never> {
+        let errorMessage = 'Error unknown';
+        if (error) {
+            errorMessage = `${error.error.message}`;
+        }
+        // window.alert(errorMessage);
+        return throwError(errorMessage);
+    }
     update(data: any, id: any): Observable<any> {
         return this._httpClient
             .put<any>(environment.baseURL + '/api/permission/' + id, data)

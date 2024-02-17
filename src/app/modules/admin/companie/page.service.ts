@@ -56,6 +56,16 @@ export class PageService {
             );
     }
 
+    createArea(data: FormData): Observable<any> {
+        return this._httpClient
+            .post<any>(environment.baseURL + '/api/area', data)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+
     update(data: FormData): Observable<any> {
         return this._httpClient
             .post<any>(environment.baseURL + '/api/update_companie' ,data)
@@ -66,9 +76,25 @@ export class PageService {
             );
     }
 
+    updateArea(data: FormData): Observable<any> {
+        return this._httpClient
+            .post<any>(environment.baseURL + '/api/update_area' ,data)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+
     delete(id: any): Observable<any> {
         return this._httpClient.delete<any>(
             environment.baseURL + '/api/companie/' + id
+        );
+    }
+
+    deleteArea(id: any): Observable<any> {
+        return this._httpClient.delete<any>(
+            environment.baseURL + '/api/area/' + id
         );
     }
 
@@ -105,6 +131,20 @@ export class PageService {
         return this._httpClient
             .post(
                 environment.baseURL + '/api/companie_page',
+                dataTablesParameters,
+                this.httpOptionsFormdata
+            )
+            .pipe(
+                switchMap((response: any) => {
+                    return of(response.data);
+                })
+            );
+    }
+
+    getArea(dataTablesParameters: any): Observable<DataTablesResponse> {
+        return this._httpClient
+            .post(
+                environment.baseURL + '/api/area_page',
                 dataTablesParameters,
                 this.httpOptionsFormdata
             )

@@ -99,6 +99,15 @@ export class PageService {
                 })
             );
     }
+    getById(id: any): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/user/'+id)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
     /**
      * Get products
      *

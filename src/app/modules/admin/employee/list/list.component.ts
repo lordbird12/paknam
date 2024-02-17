@@ -1,4 +1,3 @@
-import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { CommonModule, NgClass } from '@angular/common';
 import {
@@ -10,11 +9,8 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 import {
-    FormControl,
     FormsModule,
     ReactiveFormsModule,
-    UntypedFormBuilder,
-    Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -27,12 +23,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSort, Sort } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { FormDialogComponent } from '../form-dialog/form-dialog.component';
+import { MatTableModule } from '@angular/material/table';
 import { PageService } from '../page.service';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
-import { tap } from 'rxjs';
 import { DataTablesModule } from 'angular-datatables';
 import { Router } from '@angular/router';
 
@@ -76,9 +69,6 @@ export class ListComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.loadTable();
-        // this._service.getPosition().subscribe((resp: any)=>{
-        //     this.positions = resp.data
-        // })
     }
 
     ngAfterViewInit(): void {
@@ -87,19 +77,21 @@ export class ListComponent implements OnInit, AfterViewInit {
 
     // เพิ่มเมธอด editElement(element) และ deleteElement(element)
     editElement(element: any) {
-        const dialogRef = this.dialog.open(EditDialogComponent, {
-            width: '400px', // กำหนดความกว้างของ Dialog
-            data: {
-                data: element,
-                position: this.positions,
-            }, // ส่งข้อมูลเริ่มต้นไปยัง Dialog
-        });
+        // const dialogRef = this.dialog.open(EditDialogComponent, {
+        //     width: '400px', // กำหนดความกว้างของ Dialog
+        //     data: {
+        //         data: element,
+        //         position: this.positions,
+        //     }, // ส่งข้อมูลเริ่มต้นไปยัง Dialog
+        // });
 
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                // เมื่อ Dialog ถูกปิด ดำเนินการตามผลลัพธ์ที่คุณได้รับจาก Dialog
-            }
-        });
+        // dialogRef.afterClosed().subscribe((result) => {
+        //     if (result) {
+        //         // เมื่อ Dialog ถูกปิด ดำเนินการตามผลลัพธ์ที่คุณได้รับจาก Dialog
+        //     }
+        // });
+
+        this._router.navigate(['admin/employee/edit/' + element.id])
     }
     addElement() {
         this._router.navigate(['admin/employee/form'])

@@ -23,6 +23,89 @@
     </div>
 
     <!-- Main -->
+    <div class="grid gap-4 sm:grid-cols-1  mx-10 mt-10 ">
+        <form class="bg-card rounded-lg md:shadow px-8 pt-6 pb-8 mb-4 flex flex-col my-2"
+            [formGroup]="form">
+            <div class="-mx-3 md:flex mb-6">
+                <div class="md:w-1/5 px-3 mb-6 md:mb-0">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>หมวดสินค้า</mat-label>
+                        <mat-select [formControlName]="'category_product_id'">
+                            <mat-option [value]="''">
+                                <span>เลือกหมวดสินค้า</span>
+                            </mat-option>
+                            <mat-option *ngFor="let item of item1Data" [value]="item.id">
+                                {{item.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="md:w-1/5 px-3 mb-6 md:mb-0">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>ซัพพลายเอ่อ</mat-label>
+                        <mat-select [formControlName]="'supplier_id'">
+                            <mat-option [value]="''">
+                                <span>เลือกซัพพลายเอ่อ</span>
+                            </mat-option>
+                            <mat-option *ngFor="let item of itemSupplier" [value]="item.id">
+                                {{item.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="md:w-1/5 px-3 mb-6 md:mb-0">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>ยี่ห้อ</mat-label>
+                        <mat-select [formControlName]="'brand_id'">
+                            <mat-option [value]="''">
+                                <span>เลือกยี่ห้อ</span>
+                            </mat-option>
+                            <mat-option *ngFor="let item of itemBrand" [value]="item.id">
+                                {{item.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="md:w-1/5 px-3 mb-6 md:mb-0">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>สถานะ</mat-label>
+                        <mat-select [formControlName]="'status'">
+                            <mat-option [value]="''">
+                                <span>เลือกสถานะ</span>
+                            </mat-option>   
+                            <mat-option value="free">ว่าง</mat-option>
+                            <mat-option value="sold">ขาย</mat-option>
+                            <mat-option value="book">จอง</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="md:w-1/5 px-3 mb-6 md:mb-0">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>ประเภทสินค้า</mat-label>
+                        <mat-select [formControlName]="'type'">
+                            <mat-option [value]="''">
+                                <span>เลือกประเภทสินค้า</span>
+                            </mat-option>
+                            <mat-option value="First">มือหนึ่ง</mat-option>
+                            <mat-option value="Secound">มือสอง</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex flex-row mt-2 justify-end">
+                <div class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                    <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="search()">
+                        <mat-icon>search</mat-icon>
+                        &nbsp;
+                       ค้นหา
+                    </button>
+                    <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="ClearForm()">
+                        ยกเลิก
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg m-10  bg-white">
         <div class="flex flex-col flex-auto p-5  sm:overflow-y-auto">
             <table datatable [dtOptions]="dtOptions" class="table row-border hover w-full bg-white whitespace-nowrap">
@@ -67,8 +150,25 @@
                         <td>{{ item.engine_no ? item.engine_no : "-" }}</td>
                         <td>{{ item.color ? item.color.name : "-" }}</td>
                         <td>{{ item.cc ? item.cc.name : "-" }}</td>
-                        <td>{{ item.type ? item.type : "-" }}</td>
-                        <td>{{ item.status ? item.status : "-" }}</td>
+                        <td>
+                            <div *ngIf="item.type === 'มือหนึ่ง'" class="bg-red-300 p-1 rounded-md">
+                                {{ item.type ? item.type : "-" }}
+                            </div>
+                            <div *ngIf="item.type === 'มือสอง'" class="bg-yellow-300 p-1 rounded-md">
+                                {{ item.type ? item.type : "-" }}
+                            </div>
+                        </td>
+                        <td>
+                            <div *ngIf="item.status === 'ขายแล้ว'" class="bg-red-300 p-1 rounded-md">
+                                {{ item.status ? item.status : "-" }}
+                            </div>
+                            <div *ngIf="item.status === 'จองแล้ว'" class="bg-yellow-300 p-1 rounded-md">
+                                {{ item.status ? item.status : "-" }}
+                            </div>
+                            <div *ngIf="item.status === 'ว่างอยู่'" class="bg-green-300 p-1 rounded-md">
+                                {{ item.status ? item.status : "-" }}
+                            </div>
+                        </td>
                         <td>
                             <button mat-button (click)="showPicture(item.image)">
                                 <mat-icon>image</mat-icon>
