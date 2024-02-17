@@ -17,9 +17,10 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { PageService } from '../page.service';
-import { DataTablesModule } from 'angular-datatables';
+import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { Router } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { PictureComponent } from '../../picture/picture.component';
 
 
 @Component({
@@ -49,6 +50,9 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 })
 
 export class ListComponent implements OnInit, AfterViewInit {
+
+    @ViewChild(DataTableDirective)
+    dtElement!: DataTableDirective;
     isLoading: boolean = false;
     dtOptions: DataTables.Settings = {};
     positions: any[];
@@ -63,7 +67,6 @@ export class ListComponent implements OnInit, AfterViewInit {
     ) {
 
     }
-
     ngOnInit() {
         this.loadTable();
     }
@@ -87,6 +90,7 @@ export class ListComponent implements OnInit, AfterViewInit {
                 dataTablesParameters.status = null;
                 that._service.getPage(dataTablesParameters).subscribe((resp: any) => {
                     this.dataRow = resp.data;
+                    console.log(this.dataRow)
                     this.pages.current_page = resp.current_page;
                         this.pages.last_page = resp.last_page;
                         this.pages.per_page = resp.per_page;
@@ -109,6 +113,7 @@ export class ListComponent implements OnInit, AfterViewInit {
                 { data: 'action', orderable: false },
                 { data: 'No' },
                 { data: 'name' },
+                { data: 'picture' },
                 { data: 'create_by' },
                 { data: 'created_at' },
 
@@ -116,38 +121,36 @@ export class ListComponent implements OnInit, AfterViewInit {
         };
     }
 
-    deleteElement(): void {
-        const dialogRef = this._fuseConfirmationService.open({
-            "title": "ลบข้อมูล",
-            "message": "คุณต้องการลบข้อมูลใช่หรือไม่ ?",
-            "icon": {
-                "show": true,
-                "name": "heroicons_outline:exclamation-triangle",
-                "color": "warn"
+    delete(itemid: any) {
+        const confirmation = this._fuseConfirmationService.open({
+            title: 'ลบข้อมูล',
+            message: 'คุณต้องการลบข้อมูลใช่หรือไม่ ?',
+            icon: {
+                show: true,
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'warning',
             },
-            "actions": {
-                "confirm": {
-                    "show": true,
-                    "label": "ตกลง",
-                    "color": "warn"
+            actions: {
+                confirm: {
+                    show: true,
+                    label: 'ยืนยัน',
+                    color: 'warn',
                 },
-                "cancel": {
-                    "show": true,
-                    "label": "ยกเลิก"
-                }
+                cancel: {
+                    show: true,
+                    label: 'ยกเลิก',
+                },
             },
-            "dismissible": true
+            dismissible: true,
         });
-        // Subscribe to afterClosed from the dialog reference
-        dialogRef.afterClosed().subscribe((result) => {
-            if(result === 'confirmed') {
-                console.log('delete complete')
-            } else {
-                console.log('cancel');
-
+        confirmation.afterClosed().subscribe((result) => {
+            if (result === 'confirmed') {
+                this._service.delete(itemid).subscribe((resp) => {
+                    this.rerender();
+                });
             }
+            error: (err: any) => {};
         });
-
     }
     addElement() {
         this._router.navigate(['/admin/supplier/form'])
@@ -155,6 +158,25 @@ export class ListComponent implements OnInit, AfterViewInit {
     editElement(data: any) {
         this._router.navigate(['/admin/supplier/edit/' + data.id])
     }
+
+    showPicture(imgObject: any): void {
+        this.dialog
+            .open(PictureComponent, {
+                autoFocus: false,
+                data: {
+                    imgSelected: imgObject,
+                },
+            })
+            .afterClosed()
+            .subscribe(() => {
+                // Go up twice because card routes are setup like this; "card/CARD_ID"
+                // this._router.navigate(['./../..'], {relativeTo: this._activatedRoute});
+            });
+    }
+
+    rerender(): void {
+        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.ajax.reload();
+        });
+    }
 }
-
-

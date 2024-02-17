@@ -87,6 +87,9 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
     files: File[] = [];
     files1: File[] = [];
     warehouseData: any;
+    companie: any;
+    Id: any
+    itemData: any
     /**
      * Constructor
      */
@@ -99,13 +102,12 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
         private _authService: AuthService
-    ) {}
+    ) { 
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
-
-    async ngOnInit(): Promise<void> {
+        this.Id = this._activatedRoute.snapshot.paramMap.get('id');
+        this._Service.getById(this.Id).subscribe((resp: any)=>{
+            this.itemData = resp.data
+        })
         this.formData = this._formBuilder.group({
             category_product_id: ['', Validators.required],
             pr_no: [''],
@@ -125,8 +127,9 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
             color_id: [''],
             image: [''],
             images: [''],
+            companie_id: '',
+            area_id: ''
         });
-
         this.formData2 = this._formBuilder.group({
             category_product_id: ['', Validators.required],
             pr_no: [''],
@@ -147,19 +150,38 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
             image: [''],
             images: [''],
         });
+    }
 
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
+
+    async ngOnInit(): Promise<void> {
         this.getCategories();
         this.getSuppliers();
         this.getBrand();
-        // this.getBrandModel();
+        this.getCompanie();
         this.getCC();
         this.getColor();
+
+        this.formData.patchValue({
+            ...this.itemData,
+            image: [''],
+            images: [''],
+        })
+
+        this.formData2.patchValue({
+            ...this.itemData,
+            image: [''],
+            images: [''],
+        })
+     
     }
 
     /**
      * After view init
      */
-    ngAfterViewInit(): void {}
+    ngAfterViewInit(): void { }
 
     /**
      * On destroy
@@ -174,7 +196,7 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
- 
+
     getSuppliers(): void {
         this._Service.getSuppliers().subscribe((resp) => {
             this.itemSupplier = resp.data;
@@ -184,6 +206,11 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
     getBrand(): void {
         this._Service.getBrand().subscribe((resp) => {
             this.itemBrand = resp.data;
+        });
+    }
+    getCompanie(): void {
+        this._Service.getCompanie().subscribe((resp) => {
+            this.companie = resp.data;
         });
     }
 
@@ -231,6 +258,16 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
     somethingColorChanged(event: any): void {
         this.itemColor = event.value;
     }
+    areas: any[] = [];
+    somethingCompanie(event: any): void {
+        const item = this.companie.find(item => item.id === event.value);
+        this.areas = item.areas
+ 
+
+    }
+
+
+
 
     onSelect(event) {
         this.files.push(...event.addedFiles);
@@ -298,7 +335,7 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
                     next: (resp: any) => {
                         this._router
                             .navigateByUrl('product/list')
-                            .then(() => {});
+                            .then(() => { });
                     },
                     error: (err: any) => {
                         this._fuseConfirmationService.open({

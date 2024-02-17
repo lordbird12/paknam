@@ -22,6 +22,7 @@ import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { FormDialogComponent } from '../form-dialog/form-dialog.component';
 
 @Component({
   selector: 'form-employee',
@@ -76,6 +77,7 @@ export class FormComponent implements OnInit {
     private _router: Router,
     private _fuseConfirmationService: FuseConfirmationService,
     public activatedRoute: ActivatedRoute,
+    private dialog: MatDialog,
   ) {
     this.Id = this.activatedRoute.snapshot.paramMap.get('id');
 
@@ -281,6 +283,29 @@ export class FormComponent implements OnInit {
     }
   }
 
+  addElement(data: any) {
+    const dialogRef = this.dialog.open(FormDialogComponent, {
+      width: '500px', // กำหนดความกว้างของ Dialog
+      maxHeight: '100Vh',
+      data: {
+        data: data,
+        companie_id: this.Id
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.rerender();
+        this._changeDetectorRef.markForCheck();
+      }
+    });
+  }
+
+  rerender(): void {
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+      dtInstance.ajax.reload();
+    });
+  }
+
   pages = { current_page: 1, last_page: 1, per_page: 10, begin: 0 };
   loadTable(): void {
     const that = this;
@@ -295,7 +320,7 @@ export class FormComponent implements OnInit {
       ajax: (dataTablesParameters: any, callback) => {
         dataTablesParameters.status = null;
         dataTablesParameters.companie_id = +this.Id;
-        that._Service.getPageBranch(dataTablesParameters).subscribe((resp: any) => {
+        that._Service.getArea(dataTablesParameters).subscribe((resp: any) => {
           this.dataRow = resp.data;
           this.pages.current_page = resp.current_page;
           this.pages.last_page = resp.last_page;
@@ -307,7 +332,6 @@ export class FormComponent implements OnInit {
           } else {
             this.pages.begin = 0;
           }
-
           callback({
             recordsTotal: resp.total,
             recordsFiltered: resp.total,
@@ -319,13 +343,46 @@ export class FormComponent implements OnInit {
       columns: [
         { data: 'action', orderable: false },
         { data: 'No' },
+        { data: 'picture' },
         { data: 'name' },
         { data: 'detail' },
         { data: 'create_by' },
         { data: 'created_at' },
-
       ],
     };
   }
+
+  delete(itemid: any) {
+    const confirmation = this._fuseConfirmationService.open({
+      title: 'ลบข้อมูล',
+      message: 'คุณต้องการลบข้อมูลใช่หรือไม่ ?',
+      icon: {
+        show: true,
+        name: 'heroicons_outline:exclamation-triangle',
+        color: 'warning',
+      },
+      actions: {
+        confirm: {
+          show: true,
+          label: 'ยืนยัน',
+          color: 'warn',
+        },
+        cancel: {
+          show: true,
+          label: 'ยกเลิก',
+        },
+      },
+      dismissible: true,
+    });
+    confirmation.afterClosed().subscribe((result) => {
+      if (result === 'confirmed') {
+        this._Service.deleteArea(itemid).subscribe((resp) => {
+          this.rerender();
+        });
+      }
+      error: (err: any) => { };
+    });
+  }
+
 }
 

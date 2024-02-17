@@ -150,8 +150,25 @@
                         <td>{{ item.engine_no ? item.engine_no : "-" }}</td>
                         <td>{{ item.color ? item.color.name : "-" }}</td>
                         <td>{{ item.cc ? item.cc.name : "-" }}</td>
-                        <td>{{ item.type ? item.type : "-" }}</td>
-                        <td>{{ item.status ? item.status : "-" }}</td>
+                        <td>
+                            <div *ngIf="item.type === 'มือหนึ่ง'" class="bg-red-300 p-1 rounded-md">
+                                {{ item.type ? item.type : "-" }}
+                            </div>
+                            <div *ngIf="item.type === 'มือสอง'" class="bg-yellow-300 p-1 rounded-md">
+                                {{ item.type ? item.type : "-" }}
+                            </div>
+                        </td>
+                        <td>
+                            <div *ngIf="item.status === 'ขายแล้ว'" class="bg-red-300 p-1 rounded-md">
+                                {{ item.status ? item.status : "-" }}
+                            </div>
+                            <div *ngIf="item.status === 'จองแล้ว'" class="bg-yellow-300 p-1 rounded-md">
+                                {{ item.status ? item.status : "-" }}
+                            </div>
+                            <div *ngIf="item.status === 'ว่างอยู่'" class="bg-green-300 p-1 rounded-md">
+                                {{ item.status ? item.status : "-" }}
+                            </div>
+                        </td>
                         <td>
                             <button mat-button (click)="showPicture(item.image)">
                                 <mat-icon>image</mat-icon>

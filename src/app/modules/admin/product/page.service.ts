@@ -122,6 +122,16 @@ export class Service {
             );
     }
 
+    getCompanie(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_companie')
+            .pipe(
+                tap((data) => {
+                    this._data.next(data);
+                })
+            );
+    }
+
     getBrandModel(id: any): Observable<any> {
         return this._httpClient
             .get<any>(environment.baseURL + '/api/get_brand_model/' + id)
@@ -155,6 +165,15 @@ export class Service {
     getCategory3(): Observable<any> {
         return this._httpClient
             .get<any>(environment.baseURL + '/api/get_size')
+            .pipe(
+                tap((data) => {
+                    this._data.next(data);
+                })
+            );
+    }
+    getById(id: any): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/product/' + id)
             .pipe(
                 tap((data) => {
                     this._data.next(data);
