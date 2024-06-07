@@ -58,6 +58,20 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 icon: '10k',
                 link: '/admin/payroll/list',
             },
+            {
+                id: 'admin.income-paid',
+                title: 'ประเภทเงินได้',
+                type: 'basic',
+                icon: 'heroicons_outline:currency-dollar',
+                link: '/admin/income-paid/list',
+            },
+            {
+                id: 'admin.deduct',
+                title: 'ประเภทเงินหัก',
+                type: 'basic',
+                icon: 'heroicons_outline:squares-plus',
+                link: '/admin/deduct/list',
+            },
         ],
     },
     {
