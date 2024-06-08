@@ -193,7 +193,7 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
 
     pdf(data: any) {
-        window.open(environment.baseURL + '/api/pdf_payslip?user_no=' + data + '&month' + this.form.value.month  + '&' + this.form.value.year)
+        window.open(environment.baseURL + '/api/pdf_payslip?user_no=' + data + '&month=' + this.form.value.month  + '&year=' + this.form.value.year)
     }
 
     createPayroll() {
