@@ -51,22 +51,40 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 icon: 'heroicons_outline:clock',
                 link: '/admin/time-attendance/list',
             },
+            
+        ],
+    },
+    {
+        id: 'finance',
+        title: 'จัดการเงินเดือน',
+        subtitle: 'ขัอมูลเกี่ยวกับเงินเดือน',
+        type: 'group',
+        icon: 'heroicons_outline:home',
+        children: [
+           
             {
-                id: 'admin.payroll',
+                id: 'finance.payroll',
                 title: 'เงินเดือน',
                 type: 'basic',
                 icon: '10k',
                 link: '/admin/payroll/list',
             },
             {
-                id: 'admin.income-paid',
+                id: 'finance.income',
                 title: 'ประเภทเงินได้',
                 type: 'basic',
                 icon: 'heroicons_outline:currency-dollar',
-                link: '/admin/income-paid/list',
+                link: '/admin/income/list',
             },
             {
-                id: 'admin.deduct',
+                id: 'finance.income-paid',
+                title: 'เงินได้ - เงินหัก',
+                type: 'basic',
+                icon: 'heroicons_outline:list-bullet',
+                link: '/admin/incom-paid/list',
+            },
+            {
+                id: 'finance.deduct',
                 title: 'ประเภทเงินหัก',
                 type: 'basic',
                 icon: 'heroicons_outline:squares-plus',

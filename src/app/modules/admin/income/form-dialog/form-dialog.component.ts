@@ -19,7 +19,7 @@ import { PageService } from '../page.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 @Component({
-    selector: 'app-form-dialog-income-paid',
+    selector: 'app-form-dialog-income',
     templateUrl: './form-dialog.component.html',
     styleUrls: ['./form-dialog.component.scss'],
     encapsulation: ViewEncapsulation.None,
@@ -51,37 +51,36 @@ export class FormDialogComponent implements OnInit{
     positions: any[];
     flashMessage: 'success' | 'error' | null = null;
     constructor(private dialogRef: MatDialogRef<FormDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        @Inject(MAT_DIALOG_DATA) private data: any,
         private formBuilder: FormBuilder,
         private _service: PageService,
         private _fuseConfirmationService: FuseConfirmationService,
         private _changeDetectorRef: ChangeDetectorRef
     ) {
-        this.addForm = this.formBuilder.group({
-            user_id: [],
-            incode: [],
-            decode: [],
-            paid: [],
-            month: [],
-            remark: [],
-        });
         this._service.getPosition().subscribe((resp: any)=>{
             this.positions = resp.data
         })
     }
 
     ngOnInit(): void {
-        this.addForm.patchValue({
-            user_id: this.data?.form?.user_id,
-            month: this.data?.form?.month
-        })
+        this.addForm = this.formBuilder.group({
+            code: [],
+            name: [],
+            short_name: [],
+            tax: '1',
+            soc_ins: '1',
+            in_status: '1',
+            accu: '1',
+            abs: '1',
+            deci: '1',
+            tax_local: '1',
+        });
 
     }
 
 
 
     onSaveClick(): void {
-      
         this.flashMessage = null;
 
         // Open the confirmation dialog
@@ -111,72 +110,37 @@ export class FormDialogComponent implements OnInit{
         confirmation.afterClosed().subscribe((result) => {
             if (result === 'confirmed') {
                 const updatedData = this.addForm.value;
-                if(this.data.type === 'INCOME') {
-                    this._service.createIncomePaid(updatedData).subscribe({
-                        next: (resp: any) => {
-                            this.showFlashMessage('success');
-                            this.dialogRef.close(resp);
-                        },
-                        error: (err: any) => {
-                            this.addForm.enable();
-                            this._fuseConfirmationService.open({
-                                "title": "กรุณาระบุข้อมูล",
-                                "message": err.error.message,
-                                "icon": {
-                                    "show": true,
-                                    "name": "heroicons_outline:exclamation",
-                                    "color": "warning"
+                this._service.create(updatedData).subscribe({
+                    next: (resp: any) => {
+                        this.showFlashMessage('success');
+                        this.dialogRef.close(resp);
+                    },
+                    error: (err: any) => {
+                        this.addForm.enable();
+                        this._fuseConfirmationService.open({
+                            "title": "กรุณาระบุข้อมูล",
+                            "message": err.error.message,
+                            "icon": {
+                                "show": true,
+                                "name": "heroicons_outline:exclamation",
+                                "color": "warning"
+                            },
+                            "actions": {
+                                "confirm": {
+                                    "show": false,
+                                    "label": "ยืนยัน",
+                                    "color": "primary"
                                 },
-                                "actions": {
-                                    "confirm": {
-                                        "show": false,
-                                        "label": "ยืนยัน",
-                                        "color": "primary"
-                                    },
-                                    "cancel": {
-                                        "show": false,
-                                        "label": "ยกเลิก",
-    
-                                    }
-                                },
-                                "dismissible": true
-                            });
-                        }
-                    }) 
-                } else if (this.data.type === 'DEDUCT') {
-                    this._service.createDeductPaid(updatedData).subscribe({
-                        next: (resp: any) => {
-                            this.showFlashMessage('success');
-                            this.dialogRef.close(resp);
-                        },
-                        error: (err: any) => {
-                            this.addForm.enable();
-                            this._fuseConfirmationService.open({
-                                "title": "กรุณาระบุข้อมูล",
-                                "message": err.error.message,
-                                "icon": {
-                                    "show": true,
-                                    "name": "heroicons_outline:exclamation",
-                                    "color": "warning"
-                                },
-                                "actions": {
-                                    "confirm": {
-                                        "show": false,
-                                        "label": "ยืนยัน",
-                                        "color": "primary"
-                                    },
-                                    "cancel": {
-                                        "show": false,
-                                        "label": "ยกเลิก",
-    
-                                    }
-                                },
-                                "dismissible": true
-                            });
-                        }
-                    })
-                }
-                
+                                "cancel": {
+                                    "show": false,
+                                    "label": "ยกเลิก",
+
+                                }
+                            },
+                            "dismissible": true
+                        });
+                    }
+                })
             }
         })
 

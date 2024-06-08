@@ -19,9 +19,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {MatCardModule} from '@angular/material/card';
-import { NgxDropzoneModule } from 'ngx-dropzone';
 @Component({
-    selector: 'app-edit-dialog',
+    selector: 'app-edit-dialog-income',
     templateUrl: './edit-dialog.component.html',
     styleUrls: ['./edit-dialog.component.scss'],
     encapsulation: ViewEncapsulation.None,
@@ -45,8 +44,7 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
         MatRadioModule,
         CommonModule,
         MatSlideToggleModule,
-        MatCardModule,
-        NgxDropzoneModule
+        MatCardModule
     ],
 })
 export class EditDialogComponent implements OnInit {
@@ -75,15 +73,17 @@ isInputDisabled: boolean = true;
         private _service: PageService
     ) {
         this.editForm = this.formBuilder.group({
-            id: [],
+            id: '',
             code: [],
-            first_name: [],
-            last_name: [],
-            phone: [],
-            email: [],
-            active: '',
-            position_id: [],
-            username: [],
+            name: [],
+            short_name: [],
+            tax: '1',
+            soc_ins: '1',
+            in_status: '1',
+            accu: '1',
+            abs: '1',
+            deci: '1',
+            tax_local: '1',
         });
      }
 
@@ -152,7 +152,7 @@ isInputDisabled: boolean = true;
         confirmation.afterClosed().subscribe((result) => {
             if (result === 'confirmed') {
                 const updatedData = this.editForm.value;
-                this._service.update(updatedData, this.data.id).subscribe({
+                this._service.update(updatedData, updatedData.id).subscribe({
                     next: (resp: any) => {
                         this.showFlashMessage('success');
                         this.dialogRef.close(resp);
@@ -211,17 +211,5 @@ isInputDisabled: boolean = true;
             // Mark for check
             this._changeDetectorRef.markForCheck();
         }, 3000);
-    }
-
-    files: File[] = [];
-    onSelect(event: { addedFiles: File[] }): void {
-        this.files.push(...event.addedFiles);
-    }
-
-    onRemove(file: File): void {
-        const index = this.files.indexOf(file);
-        if (index >= 0) {
-            this.files.splice(index, 1);
-        }
     }
 }

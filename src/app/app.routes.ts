@@ -162,6 +162,11 @@ export const appRoutes: Route[] = [
                             import('app/modules/admin/department/page.routes'),
                     },
                     {
+                        path: 'income',
+                        loadChildren: () =>
+                            import('app/modules/admin/income/page.routes'),
+                    },
+                    {
                         path: 'income-paid',
                         loadChildren: () =>
                             import('app/modules/admin/income-paid/page.routes'),

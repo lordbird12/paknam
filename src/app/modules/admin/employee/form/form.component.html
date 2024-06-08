@@ -129,28 +129,17 @@
                         </mat-form-field>
                     </div>
                 </div>
-                <div class="-mx-3 md:flex mb-6" >
+                <div class="-mx-3 md:flex mb-6">
                     <div class="md:w-full px-3 mb-6 md:mb-0">
                         <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
                             <mat-label>Password</mat-label>
-                            <input
-                                id="password"
-                                matInput
-                                type="password"
-                                [formControlName]="'password'"
-                                #passwordField>
-                            <button
-                                mat-icon-button
-                                type="button"
+                            <input id="password" matInput type="password" [formControlName]="'password'" #passwordField>
+                            <button mat-icon-button type="button"
                                 (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'"
                                 matSuffix>
-                                <mat-icon
-                                    class="icon-size-5"
-                                    *ngIf="passwordField.type === 'password'"
+                                <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'password'"
                                     [svgIcon]="'heroicons_solid:eye'"></mat-icon>
-                                <mat-icon
-                                    class="icon-size-5"
-                                    *ngIf="passwordField.type === 'text'"
+                                <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'text'"
                                     [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
                             </button>
                             <mat-error>
@@ -177,6 +166,44 @@
                     </button>
                 </div>
             </form>
+            <!-- <div class="bg-card rounded-2xl md:shadow overflow-hidden px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
+                <div class="flex flex-col flex-auto p-5  sm:overflow-y-auto">
+                    <table datatable [dtOptions]="dtOptions" class="table row-border hover w-full bg-white whitespace-nowrap">
+                        <thead>
+                            <tr>
+                                <th class="w-[100px]">จัดการ</th>
+                                <th class="w-[10px]">ลำดับ</th>
+                                <th>เงินได้</th>
+                                <th>จำนวน</th>
+                                <th>เดือน</th>
+                                <th>รายละเอียด</th>
+                            </tr>   
+                        </thead>
+                        <tbody *ngIf="dataRow?.length != 0">
+                            <tr *ngFor="let item of dataRow; let i = index">
+                                <td>
+                                    <button mat-icon-button color="accent" (click)="editElement(item)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="accent" (click)="deleteElement(item)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </td>
+                                <td>{{  i + 1 }}</td>
+                                <td>{{ item.incode ? item.incode : '-' }}</td>
+                                <td>{{ item.paid ? item.paid : '-' }}</td>
+                                <td>{{ item.month ? item.month : "-" }}</td>
+                                <td>{{ item.remark ? item.remark : "-" }}</td>
+                            </tr>
+                        </tbody>
+                        <tbody *ngIf="dataRow?.length == 0">
+                            <tr>
+                                <td colspan="7" class="no-data-available text-center">ไม่มีข้อมูล !</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> -->
         </div>
 
     </div>

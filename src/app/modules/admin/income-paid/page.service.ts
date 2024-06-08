@@ -46,9 +46,22 @@ export class PageService {
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
-    create(data: any): Observable<any> {
+    createIncomePaid(data: any): Observable<any> {
         return this._httpClient
-            .post<any>(environment.baseURL + '/api/income_paid', data)
+            .post<any>(environment.baseURL + '/api/income_paid', data ,
+            this.httpOptionsFormdata)
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                
+                })
+            );
+    }
+    createDeductPaid(data: any): Observable<any> {
+        
+        return this._httpClient
+            .post<any>(environment.baseURL + '/api/deduct_paid', data , 
+            { headers: this.httpOptionsFormdata.headers })
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -58,7 +71,7 @@ export class PageService {
 
     update(data: any, id: any): Observable<any> {
         return this._httpClient
-            .put<any>(environment.baseURL + '/api/income_paid/' + id, data)
+            .put<any>(environment.baseURL + '/api/employees/' + id, data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -66,33 +79,90 @@ export class PageService {
             );
     }
 
-    delete(id: any): Observable<any> {
-        return this._httpClient.delete<any>(
-            environment.baseURL + '/api/income_paid/' + id,
-            { headers: this.httpOptionsFormdata.headers }
-        );
-    }
+    // delete(id: any, type: any): Observable<any> {
+    //     return this._httpClient.delete<any>(
+    //         environment.baseURL + '/api//' + id,
+    //         { headers: this.httpOptionsFormdata.headers }
+    //     );
+    // }
 
-    getAllMenu(): Observable<any> {
-        return this._httpClient.get(environment.baseURL + '/api/get_menu').pipe(
-            switchMap((response: any) => {
-                return of(response.data);
+    delete(id: any, type): Observable<any> {
+        return this._httpClient
+          .delete<any>(`${environment.baseURL}/api/${type}/${id}`)
+          .pipe(
+            tap((result) => {
+              this._data.next(result);
             })
-        );
+          );
+      }
+    getDepartment(): Observable<any> {
+        return this._httpClient
+            .delete<any>(environment.baseURL + '/api/get_department',
+            { headers: this.httpOptionsFormdata.headers })
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
     }
-
     getPosition(): Observable<any> {
         return this._httpClient
-            .get<any>(environment.baseURL + '/api/positions')
+            .get<any>(environment.baseURL + '/api/get_position')
             .pipe(
                 tap((result) => {
                     this._data.next(result);
                 })
             );
     }
+
+    getIncomePaid(data: any): Observable<any> {
+        return this._httpClient
+          .get<any>(`${environment.baseURL}/api/get_income_paid/${data.user_id}/${data.month}`)
+          .pipe(
+            tap((result) => {
+              this._data.next(result);
+            })
+          );
+      }
+    getDeductPaid(data: any): Observable<any> {
+        return this._httpClient
+          .get<any>(`${environment.baseURL}/api/get_deduct_paid/${data.user_id}/${data.month}`)
+          .pipe(
+            tap((result) => {
+              this._data.next(result);
+            })
+          );
+      }
     getPermission(): Observable<any> {
         return this._httpClient
             .get<any>(environment.baseURL + '/api/get_permission')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+    getUser(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_user')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+    getIncome(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_income')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+    getDeduct(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_deduct')
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -113,8 +183,9 @@ export class PageService {
     getPage(dataTablesParameters: any): Observable<DataTablesResponse> {
         return this._httpClient
             .post(
-                environment.baseURL + '/api/income_paid_page',
-                dataTablesParameters
+                environment.baseURL + '/api/user_page',
+                dataTablesParameters,
+                this.httpOptionsFormdata
             )
             .pipe(
                 switchMap((response: any) => {
