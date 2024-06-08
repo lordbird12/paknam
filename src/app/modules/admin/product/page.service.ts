@@ -56,15 +56,7 @@ export class Service {
             );
     }
 
-    update(data: any, id: any): Observable<any> {
-        return this._httpClient
-            .put<any>(environment.baseURL + '/api/employees/' + id, data)
-            .pipe(
-                tap((result) => {
-                    this._data.next(result);
-                })
-            );
-    }
+
 
     delete(id: any): Observable<any> {
         return this._httpClient.delete<any>(
@@ -225,6 +217,24 @@ export class Service {
                 environment.baseURL + '/api/product',
                 data,
                 this.httpOptionsFormdata
+            )
+            .pipe(
+                switchMap((response: any) => {
+                    // Return a new observable with the response
+                    return of(response);
+                })
+            );
+    }
+
+    update(data: FormData): Observable<any> {
+        // Throw error, if the user is already logged in
+        //  if (this._authenticated) {
+        //     return throwError('User is already logged in.');
+        // }
+        return this._httpClient
+            .post(
+                environment.baseURL + '/api/product',
+                data,
             )
             .pipe(
                 switchMap((response: any) => {

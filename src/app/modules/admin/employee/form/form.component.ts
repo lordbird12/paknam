@@ -32,6 +32,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, lastValueFrom } from 'rxjs';
+import { DataTablesModule } from 'angular-datatables';
 
 @Component({
     selector: 'form-employee',
@@ -57,12 +58,15 @@ import { forkJoin, lastValueFrom } from 'rxjs';
         MatRadioModule,
         CommonModule,
         NgxDropzoneModule,
+        DataTablesModule
     ],
 })
 export class FormComponent implements OnInit {
     /**
      * Constructor
      */
+    dtOptions: DataTables.Settings = {};
+    public dataRow: any[];
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     addForm: FormGroup;
     addForm2: FormGroup;
@@ -83,10 +87,7 @@ export class FormComponent implements OnInit {
         private _router: Router,
         public activatedRoute: ActivatedRoute,
     ) {
-
         this.Id = this.activatedRoute.snapshot.paramMap.get('id');
-
-
 
         this.addForm = this.formBuilder.group({
             permission_id: [],
@@ -129,8 +130,9 @@ export class FormComponent implements OnInit {
             this.permissions = response.permissions.data;
             this.departments = response.departments.data;
             this.positions = response.positions.data;
-
+            // this.loadTable();
         if(this.Id) {
+            
             this._service.getById(this.Id).subscribe((resp: any)=>{
                 this.itemData = resp.data;
                 this.addForm.patchValue({
@@ -281,5 +283,54 @@ export class FormComponent implements OnInit {
         if (index >= 0) {
             this.files.splice(index, 1);
         }
+    }
+
+     pages = { current_page: 1, last_page: 1, per_page: 10, begin: 0 };
+    loadTable(): void {
+        const that = this;
+        this.dtOptions = {
+            pagingType: 'full_numbers',
+            pageLength: 25,
+            serverSide: true,
+            processing: true,
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json',
+            },
+            ajax: (dataTablesParameters: any, callback) => {
+                dataTablesParameters.status = null;
+                that._service
+                    .getPageIncomePaid(dataTablesParameters)
+                    .subscribe((resp: any) => {
+                        this.dataRow = resp.data;
+                        console.log(this.dataRow,'dataRow');
+                        
+                        this.pages.current_page = resp.current_page;
+                        this.pages.last_page = resp.last_page;
+                        this.pages.per_page = resp.per_page;
+                        if (resp.current_page > 1) {
+                            this.pages.begin =
+                                resp.per_page * resp.current_page - 1;
+                        } else {
+                            this.pages.begin = 0;
+                        }
+
+                        callback({
+                            recordsTotal: resp.total,
+                            recordsFiltered: resp.total,
+                            data: [],
+                        });
+                        this._changeDetectorRef.markForCheck();
+                    });
+            },
+            columns: [
+                { data: 'action', orderable: false },
+                { data: 'No' },
+                { data: 'name' },
+                { data: 'email' },
+                { data: 'tel' },
+                { data: 'create_by' },
+                { data: 'created_at' },
+            ],
+        };
     }
 }

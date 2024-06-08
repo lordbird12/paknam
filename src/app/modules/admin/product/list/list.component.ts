@@ -63,7 +63,8 @@ export class ListComponent implements OnInit, AfterViewInit {
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     itemSupplier: any
     item1Data: any
-    itemBrand: any
+    itemBrand: any;
+    companie: any; 
     // public dataRow: any[];
     dataRow: any[] = [];
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -74,13 +75,14 @@ export class ListComponent implements OnInit, AfterViewInit {
         private _router: Router,
         private _fb: FormBuilder
     ) {
-        
         this.form = this._fb.group({
             category_product_id: '',
             supplier_id: '',
             brand_id: '',
             type: '',
             status: '',
+            companie_id: '',
+            area_id: '',
         })
      }
 
@@ -100,12 +102,27 @@ export class ListComponent implements OnInit, AfterViewInit {
         this._service.getBrand().subscribe((resp) => {
             this.itemBrand = resp.data;
         });
+    
     }
+
+    getCompanie(): void {
+        this._service.getCompanie().subscribe((resp) => {
+            this.companie = resp.data;
+        });
+    }
+
+    areas: any[] = [];
+    somethingCompanie(event: any): void {
+        const item = this.companie.find(item => item.id === event.value);
+        this.areas = item.areas
+    }
+
     ngOnInit() {
         this.loadTable();
         this.getCategories();
         this.getBrand();
         this.getSuppliers();
+        this.getCompanie();
     }
 
     ngAfterViewInit(): void {
@@ -166,6 +183,8 @@ export class ListComponent implements OnInit, AfterViewInit {
                 dataTablesParameters.category_product_id = this.form.value.category_product_id;
                 dataTablesParameters.supplier_id = this.form.value.supplier_id;
                 dataTablesParameters.brand_id = this.form.value.brand_id;
+                dataTablesParameters.companie_id = this.form.value.companie_id;
+                dataTablesParameters.area_id = this.form.value.area_id;
                 that._service
                     .getPage(dataTablesParameters)
                     .subscribe((resp: any) => {

@@ -10,7 +10,9 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 import {
+    FormBuilder,
     FormControl,
+    FormGroup,
     FormsModule,
     ReactiveFormsModule,
     UntypedFormBuilder,
@@ -66,64 +68,121 @@ export class ListComponent implements OnInit, AfterViewInit {
     dtOptions: DataTables.Settings = {};
     payrolls: any;
     public dataRow: any[];
+
+    year: any[]=[
+        '2022','2023','2024','2025','2026'
+    ]
+    month: any[] = [
+        { code: '01', name: 'มกราคม' },
+        { code: '02', name: 'กุมภาพันธ์' },
+        { code: '03', name: 'มีนาคม' },
+        { code: '04', name: 'เมษายน' },
+        { code: '05', name: 'พฤษภาคม' },
+        { code: '06', name: 'มิถุนายน' },
+        { code: '07', name: 'กรกฎาคม' },
+        { code: '08', name: 'สิงหาคม' },
+        { code: '09', name: 'กันยายน' },
+        { code: '10', name: 'ตุลาคม' },
+        { code: '11', name: 'พฤศจิกายน' },
+        { code: '12', name: 'ธันวาคม' },
+    ];
+    form: FormGroup;
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     constructor(
         private dialog: MatDialog,
         private _changeDetectorRef: ChangeDetectorRef,
         private _service: PageService,
-        private _router: Router
-    ) {}
+        private _router: Router,
+        private _fb : FormBuilder
+    ) {
+        this.form = this._fb.group({
+            year: '',
+            month: ''
+        })
+    }
 
     ngOnInit() {
-        const data = {
-            year: 2024,
-            month: 2,
-        };
-        this._service.getPayroll(data).subscribe((resp: any) => {
+        this.form.patchValue({
+            year: '2023',
+            month: '12'
+        })
+ 
+        this._service.getPayroll(this.form.value).subscribe((resp: any) => {
             this.payrolls = resp.data;
             this._changeDetectorRef.markForCheck();
 
         });
 
+        // this.loadTable()
+
+    }
+    
+    getData() {
+        this._service.getPayroll(this.form.value).subscribe((resp: any) => {
+            this.payrolls = resp.data;
+            this._changeDetectorRef.markForCheck();
+
+        });
+    }
+    clear() {
+        this.form.reset()
     }
 
     ngAfterViewInit(): void {
         this._changeDetectorRef.detectChanges();
     }
 
-    // เพิ่มเมธอด editElement(element) และ deleteElement(element)
-    editElement(element: any) {
-        // const dialogRef = this.dialog.open(EditDialogComponent, {
-        //     width: '400px', // กำหนดความกว้างของ Dialog
-        //     data: {
-        //         data: element,
-        //     }, // ส่งข้อมูลเริ่มต้นไปยัง Dialog
-        // });
+    formFieldHelpers: string[] = ['fuse-mat-dense'];
+    pages = { current_page: 1, last_page: 1, per_page: 10, begin: 0 };
+    loadTable(): void {
+        const that = this;
+        this.dtOptions = {
+            pagingType: "full_numbers",
+            pageLength: 25,
+            serverSide: true,
+            processing: true,
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json",
+            },
+            ajax: (dataTablesParameters: any, callback) => {
+                dataTablesParameters.status = null;
+                that._service.getPage(dataTablesParameters).subscribe((resp: any) => {
+                    this.dataRow = this.payrolls;
+                    this.pages.current_page = resp.current_page;
+                    this.pages.last_page = resp.last_page;
+                    this.pages.per_page = resp.per_page;
+                    if (resp.data.currentPage > 1) {
+                        this.pages.begin =
+                            parseInt(resp.per_page) *
+                            (parseInt(resp.current_page) - 1);
+                    } else {
+                        this.pages.begin = 0;
+                    }
 
-        // dialogRef.afterClosed().subscribe((result) => {
-        //     if (result) {
-        //         // เมื่อ Dialog ถูกปิด ดำเนินการตามผลลัพธ์ที่คุณได้รับจาก Dialog
-        //     }
-        // });
+                    callback({
+                        recordsTotal: resp.total,
+                        recordsFiltered: resp.total,
+                        data: [],
+                    });
+                    this._changeDetectorRef.markForCheck();
+                });
+            },
+            columns: [
+                { data: 'action',orderable: false },
+                { data: 'No' },
+                { data: 'name' },
+                { data: 'detail' },
+                { data: 'detail' },
+                { data: 'detail' },
+                { data: 'detail' },
+                { data: 'create_by' },
+                { data: 'created_at' },
+
+            ],
+        };
     }
-    addElement() {
-        this._router.navigate(['admin/employee/form']);
-        // const dialogRef = this.dialog.open(FormDialogComponent, {
-        //     width: '860px', // กำหนดความกว้างของ Dialog
-        // });
 
-        // dialogRef.afterClosed().subscribe((result) => {
-        //     if (result) {
-        //         //    console.log(result,'result')
-        //     }
-        // });
+    pdf() {
+        window.open('https://asha-tech.co.th/paknam/public/api/export_pdf_payroll/1')
     }
-
-    deleteElement() {
-        // เขียนโค้ดสำหรับการลบออกองคุณ
-    }
-
-    // handlePageEvent(event) {
-    //     this.loadData(event.pageIndex + 1, event.pageSize);
-    // }
 }
