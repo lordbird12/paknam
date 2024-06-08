@@ -38,7 +38,6 @@ export default [
                 resolve  : {
                     company    : () => inject(PageService).getCompany(),
                     area: () => inject(PageService).getArea(),
-                    product: () => inject(PageService).getProduct(),
                 },
             },
         ],

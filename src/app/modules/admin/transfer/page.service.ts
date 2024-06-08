@@ -46,9 +46,9 @@ export class PageService {
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
-    create(data: FormData): Observable<any> {
+    create(data: any): Observable<any> {
         return this._httpClient
-            .post<any>(environment.baseURL + '/api/permission', data)
+            .post<any>(environment.baseURL + '/api/transfer', data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);

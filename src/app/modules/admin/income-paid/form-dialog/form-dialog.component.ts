@@ -59,6 +59,7 @@ export class FormDialogComponent implements OnInit{
     ) {
         this.addForm = this.formBuilder.group({
             user_id: [],
+            year: '',
             incode: [],
             decode: [],
             paid: [],
