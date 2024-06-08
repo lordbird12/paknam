@@ -37,6 +37,7 @@ import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 import { tap } from 'rxjs';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { Router } from '@angular/router';
+import { environment } from 'environments/environment.development';
 
 @Component({
     selector: 'employee-list',
@@ -154,7 +155,7 @@ export class ListComponent implements OnInit, AfterViewInit {
                 dataTablesParameters.year = this.form.value.year;
                 dataTablesParameters.month = this.form.value.month
                 that._service.getPage(dataTablesParameters).subscribe((resp: any) => {
-                    this.dataRow = this.payrolls;
+                    this.dataRow = resp.data;
                     this.pages.current_page = resp.current_page;
                     this.pages.last_page = resp.last_page;
                     this.pages.per_page = resp.per_page;
@@ -178,7 +179,12 @@ export class ListComponent implements OnInit, AfterViewInit {
                 { data: 'action', orderable: false },
                 { data: 'No' },
                 { data: 'name' },
-                { data: 'picture' },
+                { data: 'total_income' },
+                { data: 'total_deduct' },
+                { data: 'total_late_deduct' },
+                { data: 'total_ot' },
+                { data: 'salary' },
+                { data: 'total_summary' },
                 { data: 'create_by' },
                 { data: 'created_at' },
 
@@ -186,8 +192,8 @@ export class ListComponent implements OnInit, AfterViewInit {
         };
     }
 
-    pdf() {
-        window.open('https://asha-tech.co.th/paknam/public/api/export_pdf_payroll/1')
+    pdf(data: any) {
+        window.open(environment.baseURL + '/api/pdf_payslip?user_no=' + data + '&month' + this.form.value.month  + '&' + this.form.value.year)
     }
 
     createPayroll() {
