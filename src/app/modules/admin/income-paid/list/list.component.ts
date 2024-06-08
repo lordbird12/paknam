@@ -107,6 +107,7 @@ export class ListComponent implements OnInit, AfterViewInit {
         this.deductData = this._activatedRoute.snapshot.data.deduct.data;
         
         this.form = this._fb.group({
+            year: '',
             user_id: '',
             month: ''
         })

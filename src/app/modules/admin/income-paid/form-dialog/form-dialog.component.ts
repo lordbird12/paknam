@@ -72,6 +72,7 @@ export class FormDialogComponent implements OnInit{
 
     ngOnInit(): void {
         this.addForm.patchValue({
+            year: this.data?.form?.year,
             user_id: this.data?.form?.user_id,
             month: this.data?.form?.month
         })

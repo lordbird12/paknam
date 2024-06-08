@@ -36,6 +36,19 @@
                 </div>
                 <div class="md:w-1/5 px-3 mb-6 md:mb-0">
                     <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label class="text-lg font-bold">ปี</mat-label>
+                        <mat-select [formControlName]="'year'">
+                            <mat-option [value]="''">
+                                <span>เลือกปี</span>
+                            </mat-option>
+                            <mat-option *ngFor="let item of year" [value]="item">
+                                {{item}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="md:w-1/5 px-3 mb-6 md:mb-0">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                         <mat-label class="text-lg font-bold">เดือน</mat-label>
                         <mat-select [formControlName]="'month'">
                             <mat-option [value]="''">
