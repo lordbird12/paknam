@@ -209,6 +209,7 @@ export class ListComponent implements OnInit, AfterViewInit {
                 name: data.name,
                 month: this.form.value.month,
                 year: this.form.value.year,
+                forgot_count: 0
             }
             this._service.syncOlaf(item).subscribe(response => {
             

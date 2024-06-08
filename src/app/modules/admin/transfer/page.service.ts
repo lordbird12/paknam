@@ -123,4 +123,34 @@ export class PageService {
                 })
             );
     }
+
+    getCompany(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_companie')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+
+    getArea(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_area')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+
+    getProduct(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_area')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
 }

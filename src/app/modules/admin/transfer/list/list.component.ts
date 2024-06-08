@@ -110,7 +110,6 @@ export class ListComponent implements OnInit, AfterViewInit {
                 dataTablesParameters.status = null;
                 that._service.getPage(dataTablesParameters).subscribe((resp: any) => {
                     this.dataRow = resp.data;
-                    // console.log('111',this.dataRow)
                     this.pages.current_page = resp.data.current_page;
                     this.pages.last_page = resp.data.last_page;
                     this.pages.per_page = resp.data.per_page;
