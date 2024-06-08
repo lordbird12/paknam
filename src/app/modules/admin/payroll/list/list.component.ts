@@ -210,4 +210,8 @@ export class ListComponent implements OnInit, AfterViewInit {
             dtInstance.ajax.reload();
         });
     }
+
+    changeData () {
+        this.rerender()
+    }
 }

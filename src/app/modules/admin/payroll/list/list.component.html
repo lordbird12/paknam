@@ -24,7 +24,7 @@
                 <div class="md:w-1/5 px-3 mb-6 md:mb-0">
                     <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                         <mat-label class="text-lg font-bold">ปี</mat-label>
-                        <mat-select [formControlName]="'year'">
+                        <mat-select [formControlName]="'year'" (selectionChange)="changeData()">
                             <mat-option [value]="''">
                                 <span>เลือกปี</span>
                             </mat-option>
@@ -37,7 +37,7 @@
                 <div class="md:w-1/5 px-3 mb-6 md:mb-0">
                     <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                         <mat-label class="text-lg font-bold">เดือน</mat-label>
-                        <mat-select [formControlName]="'month'">
+                        <mat-select [formControlName]="'month'" (selectionChange)="changeData()">
                             <mat-option [value]="''">
                                 <span>เลือกเดือน</span>
                             </mat-option>
@@ -99,7 +99,7 @@
                 </tbody>
                 <tbody *ngIf="dataRow?.length == 0">
                     <tr>
-                        <td colspan="7" class="no-data-available text-center">ไม่มีข้อมูล !</td>
+                        <td colspan="11" class="no-data-available text-center">ไม่มีข้อมูล !</td>
                     </tr>
                 </tbody>
             </table>
