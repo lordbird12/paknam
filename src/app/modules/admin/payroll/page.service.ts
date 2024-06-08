@@ -48,7 +48,7 @@ export class PageService {
 
     create(data: FormData): Observable<any> {
         return this._httpClient
-            .post<any>(environment.baseURL + '/api/user', data)
+            .post<any>(environment.baseURL + '/api/payroll_calculate', data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -93,7 +93,7 @@ export class PageService {
 
     getPayroll(data: any): Observable<any> {
         return this._httpClient
-            .post<any>('https://demo-olaf.dev-asha.com:2053/report/monthly/json/branches', data)
+            .post<any>(environment.baseURL + '/api/payroll_calculate', data, { headers: this.httpOptionsFormdata.headers })
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -125,7 +125,7 @@ export class PageService {
     getPage(dataTablesParameters: any): Observable<DataTablesResponse> {
         return this._httpClient
             .post(
-                environment.baseURL + '/api/user_page',
+                environment.baseURL + '/api/payroll_page',
                 dataTablesParameters,
                 this.httpOptionsFormdata
             )

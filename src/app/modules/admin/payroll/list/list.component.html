@@ -50,10 +50,8 @@
             </div>
             <div class="flex flex-row mt-2 justify-end">
                 <div class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                    <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="getData()">
-                        <mat-icon>search</mat-icon>
-                        &nbsp;
-                       ค้นหา
+                    <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="createPayroll()">
+                       สร้างเงินเดือน
                     </button>
                     <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="clear()">
                         ยกเลิก
@@ -63,63 +61,40 @@
         </form>
     </div>
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg m-10  bg-white">
-        <div class="flex flex-row mt-2 justify-end p-5 pb-0">
-            <div class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="syncOlaf()">
-                    <mat-icon svgIcon="mat_outline:sync"></mat-icon>
-                    &nbsp;
-                   ดึงข้อมูล
-                </button>
-            </div>
-        </div>
-        <div class="flex flex-col flex-auto p-5  sm:overflow-y-auto overflow-x-auto">
-            <table class="rounded-lg m-5 w-full mx-auto bg-gray-200 text-gray-800 whitespace-nowrap">
-                <thead class="font-medium dark:border-neutral-500 border-b-2 border-collapse">
+        <div class="flex flex-col flex-auto p-5  sm:overflow-y-auto">
+            <table datatable [dtOptions]="dtOptions" class="table row-border hover w-full bg-white whitespace-nowrap">
+                <thead>
                     <tr>
-                        <th class="w-[100px] h-[50px]">จัดการ</th>
-                        <th class="w-[10px]  border-2">ลำดับ</th>
-                        <th class="w-[100px] border-2">รหัส</th>
-                        <th class="w-[200px] border-2">ชื่อ - นามสกุล</th>
-                        <th class="w-[200px]  border-2">แผนก</th>
-                        <!-- <th class="w-[250px]  border-2">ตำแหน่ง</th> -->
-                        <th class="w-[250px]  border-2">วันทำงานทั้งหมด</th>
-                        <th class="w-[250px]  border-2">วันมาทำงานจริง</th>
-                        <th class="w-[250px]  border-2">จำนวนวันมาสาย</th>
-                        <th class="w-[250px]  border-2">จำนวนวันขาดงาน</th>
-                        <th class="w-[250px]  border-2">จำนวนวันลา</th>
-                        <th class="w-[250px]  border-2">จำนวนวันลาป่วย</th>
-                        <th class="w-[250px]  border-2">% มาทำงาน</th>
-                        <th class="w-[250px]  border-2">รวมมาสาย</th>
-                        <th class="w-[250px]  border-2">เวลามาไวสุด</th>
-                        <th class="w-[250px]  border-2">รวมโอที</th>
-                        <!-- <th>วันที่สร้าง</th> -->
+                        <th class="w-[100px]">จัดการ</th>
+                        <th class="w-[10px]">ลำดับ</th>
+                        <th>ชื่อไฟแนนซ์</th>
+                        <th>Email</th>
+                        <th>รูป</th>
+                        <th>สร้างโดย</th>
+                        <th>วันที่สร้าง</th>
                     </tr>
                 </thead>
-                <tbody *ngIf="payrolls?.length != 0">
-                    <tr *ngFor="let item of payrolls; let i = index" class="bg-white border-b-2 border-collapse">
-                        <td class="text-center">
-                            <button mat-icon-button color="accent" (click)="pdf()">
-                                <mat-icon>print</mat-icon>
+                <tbody *ngIf="dataRow?.length != 0">
+                    <tr *ngFor="let item of dataRow; let i = index">
+                        <td>
+                            <button mat-icon-button color="accent" (click)="editElement(item)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button color="accent" (click)="delete(item.id)">
+                                <mat-icon>delete</mat-icon>
                             </button>
                         </td>
-                        <td class="text-center h-[50px]">{{i + 1 }}</td>
-                        <td>{{ item.employeeNo }}</td>
-                        <td>{{ item.name }}</td>
-                        <td class="text-center">{{ item?.groupName}}</td>
-                        <td class="text-center">{{ item?.totalWorkday }}</td>
-                        <td class="text-center">{{ item?.actualWorkday }}</td>
-                        <td class="text-center">{{ item?.lateCount }}</td>
-                        <td class="text-center">{{ item?.absentCount }}</td>
-                        <td class="text-center">{{ item?.personalLeaveCount }}</td>
-                        <td class="text-center">{{ item?.sickLeaveCount }}</td>
-                        <td class="text-center">{{ item?.percenWork }}</td>
-                        <td class="text-center">{{ item?.sumLate }}</td>
-                        <td class="text-center">{{ item?.sumEarly }}</td>
-                        <td class="text-center">{{ item?.sumOT }}</td>
-                        <!-- <td>{{ item.created_at !== null ? (item.created_at | date : "dd-MM-yy, HH:mm"): "-"}}</td> -->
+                        <td>{{ pages.begin + (i + 1) }}</td>
+                        <td>{{ item.name ? item.name : "-" }}</td>
+                        <td>{{ item.email ? item.email : "-" }}</td>
+                        <td>  <button mat-icon-button color="accent" (click)="showPicture(item.image)">
+                            <mat-icon>image</mat-icon>
+                        </button></td>
+                        <td>{{ item.create_by ? item.create_by : "-" }}</td>
+                        <td>{{ item.created_at !== null ? (item.created_at | date : "dd-MM-yy, HH:mm"): "-"}}</td>
                     </tr>
                 </tbody>
-                <tbody *ngIf="payrolls?.length == 0">
+                <tbody *ngIf="dataRow?.length == 0">
                     <tr>
                         <td colspan="7" class="no-data-available text-center">ไม่มีข้อมูล !</td>
                     </tr>

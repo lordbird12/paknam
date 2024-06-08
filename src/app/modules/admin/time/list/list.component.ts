@@ -35,7 +35,7 @@ import { FormDialogComponent } from '../form-dialog/form-dialog.component';
 import { PageService } from '../page.service';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 import { tap } from 'rxjs';
-import { DataTableDirective, DataTablesModule } from 'angular-datatables';
+import { DataTablesModule } from 'angular-datatables';
 import { Router } from '@angular/router';
 
 @Component({
@@ -68,8 +68,7 @@ export class ListComponent implements OnInit, AfterViewInit {
     dtOptions: DataTables.Settings = {};
     payrolls: any;
     public dataRow: any[];
-    @ViewChild(DataTableDirective)
-    dtElement!: DataTableDirective;
+
     year: any[]=[
         '2022','2023','2024','2025','2026'
     ]
@@ -112,13 +111,13 @@ export class ListComponent implements OnInit, AfterViewInit {
             month: currentMonth
         })
  
-        // this._service.getPayroll(this.form.value).subscribe((resp: any) => {
-        //     this.payrolls = resp.data;
-        //     this._changeDetectorRef.markForCheck();
+        this._service.getPayroll(this.form.value).subscribe((resp: any) => {
+            this.payrolls = resp.data;
+            this._changeDetectorRef.markForCheck();
 
-        // });
+        });
 
-        this.loadTable()
+        // this.loadTable()
 
     }
     
@@ -151,8 +150,6 @@ export class ListComponent implements OnInit, AfterViewInit {
             },
             ajax: (dataTablesParameters: any, callback) => {
                 dataTablesParameters.status = null;
-                dataTablesParameters.year = this.form.value.year;
-                dataTablesParameters.month = this.form.value.month
                 that._service.getPage(dataTablesParameters).subscribe((resp: any) => {
                     this.dataRow = this.payrolls;
                     this.pages.current_page = resp.current_page;
@@ -175,10 +172,13 @@ export class ListComponent implements OnInit, AfterViewInit {
                 });
             },
             columns: [
-                { data: 'action', orderable: false },
+                { data: 'action',orderable: false },
                 { data: 'No' },
                 { data: 'name' },
-                { data: 'picture' },
+                { data: 'detail' },
+                { data: 'detail' },
+                { data: 'detail' },
+                { data: 'detail' },
                 { data: 'create_by' },
                 { data: 'created_at' },
 
@@ -190,18 +190,32 @@ export class ListComponent implements OnInit, AfterViewInit {
         window.open('https://asha-tech.co.th/paknam/public/api/export_pdf_payroll/1')
     }
 
-    createPayroll() {
-        this._service.create(this.form.value).subscribe(response => {
-           this.rerender();
-            console.log('API Response:', response);
-          }, error => {
-            console.error('API Error:', error);
+    syncOlaf() {
+        this.payrolls.forEach(data => {
+            console.log('data', data);
+            const item = {
+                employee_no: data.employeeNo,
+                group_name: data.groupName,
+                absent_count: +data.absentCount,
+                actual_workday: +data.actualWorkday,
+                late_count: +data.lateCount,
+                percen_work: +data.percenWork,
+                personal_leave_count: +data.personalLeaveCount,
+                sick_leave_count: +data.sickLeaveCount,
+                sum_early: +data.sumEarly,
+                sum_late: +data.sumLate,
+                sum_o_t: +data.sumOT,
+                total_workday: +data.totalWorkday,
+                name: data.name,
+                month: this.form.value.month,
+                year: this.form.value.year,
+            }
+            this._service.syncOlaf(item).subscribe(response => {
+            
+              console.log('API Response:', response);
+            }, error => {
+              console.error('API Error:', error);
+            });
           });
-    }
-
-    rerender(): void {
-        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            dtInstance.ajax.reload();
-        });
     }
 }

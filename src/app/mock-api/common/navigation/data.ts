@@ -73,7 +73,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 id: 'finance.time',
                 title: 'ข้อมูลลงเวลา',
                 type: 'basic',
-                icon: '10k',
+                icon: 'heroicons_outline:clock',
                 link: '/admin/time/list',
             },
             {
