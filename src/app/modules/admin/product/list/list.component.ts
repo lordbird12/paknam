@@ -159,6 +159,7 @@ export class ListComponent implements OnInit, AfterViewInit {
             language: {
                 url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json',
             },
+            order: [[0, 'desc']], // Default ordering by 'created_at' in descending order
             ajax: (dataTablesParameters: any, callback) => {
                 dataTablesParameters.type = this.form.value.type;
                 dataTablesParameters.status = this.form.value.status;

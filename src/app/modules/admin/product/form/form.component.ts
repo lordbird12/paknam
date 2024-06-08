@@ -334,7 +334,7 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
                 this._Service.new(formData).subscribe({
                     next: (resp: any) => {
                         this._router
-                            .navigateByUrl('product/list')
+                            .navigateByUrl('admin/product/list')
                             .then(() => { });
                     },
                     error: (err: any) => {
