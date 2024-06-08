@@ -88,7 +88,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 title: 'เงินได้ - เงินหัก',
                 type: 'basic',
                 icon: 'heroicons_outline:list-bullet',
-                link: '/admin/incom-paid/list',
+                link: '/admin/income-deduct/list',
             },
         ],
     },
