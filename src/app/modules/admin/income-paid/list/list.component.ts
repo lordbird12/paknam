@@ -40,7 +40,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 @Component({
-    selector: 'income-paid-list',
+    selector: 'late-list',
     templateUrl: './list.component.html',
     encapsulation: ViewEncapsulation.None,
     standalone: true,
@@ -117,6 +117,7 @@ export class ListComponent implements OnInit, AfterViewInit {
         const currentMonth = ('0' + (new Date().getMonth() + 1)).slice(-2); // แปลงเดือนให้เป็นรูปแบบสองหลัก เช่น '01', '02'
 
         this.form.patchValue({
+            year: currentYear,
             user_id: '',
             month: ''
         })

@@ -70,6 +70,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 link: '/admin/payroll/list',
             },
             {
+                id: 'finance.time',
+                title: 'ข้อมูลลงเวลา',
+                type: 'basic',
+                icon: '10k',
+                link: '/admin/time/list',
+            },
+            {
                 id: 'finance.income',
                 title: 'ประเภทเงินได้',
                 type: 'basic',
@@ -89,6 +96,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 type: 'basic',
                 icon: 'heroicons_outline:list-bullet',
                 link: '/admin/income-deduct/list',
+            },
+            {
+                id: 'finance.income-paid',
+                title: 'ตั้งค่ามาสาย',
+                type: 'basic',
+                icon: 'heroicons_outline:list-bullet',
+                link: '/admin/late/list',
             },
         ],
     },

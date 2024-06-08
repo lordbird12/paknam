@@ -102,9 +102,13 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
+
+        const currentYear = new Date().getFullYear().toString();
+        const currentMonth = ('0' + (new Date().getMonth() + 1)).slice(-2); // แปลงเดือนให้เป็นรูปแบบสองหลัก เช่น '01', '02'
+    
         this.form.patchValue({
-            year: '2023',
-            month: '12'
+            year: currentYear,
+            month: currentMonth
         })
  
         this._service.getPayroll(this.form.value).subscribe((resp: any) => {
@@ -184,5 +188,34 @@ export class ListComponent implements OnInit, AfterViewInit {
 
     pdf() {
         window.open('https://asha-tech.co.th/paknam/public/api/export_pdf_payroll/1')
+    }
+
+    syncOlaf() {
+        this.payrolls.forEach(data => {
+            console.log('data', data);
+            const item = {
+                employee_no: data.employeeNo,
+                group_name: data.groupName,
+                absent_count: +data.absentCount,
+                actual_workday: +data.actualWorkday,
+                late_count: +data.lateCount,
+                percen_work: +data.percenWork,
+                personal_leave_count: +data.personalLeaveCount,
+                sick_leave_count: +data.sickLeaveCount,
+                sum_early: +data.sumEarly,
+                sum_late: +data.sumLate,
+                sum_o_t: +data.sumOT,
+                total_workday: +data.totalWorkday,
+                name: data.name,
+                month: this.form.value.month,
+                year: this.form.value.year,
+            }
+            this._service.syncOlaf(item).subscribe(response => {
+            
+              console.log('API Response:', response);
+            }, error => {
+              console.error('API Error:', error);
+            });
+          });
     }
 }

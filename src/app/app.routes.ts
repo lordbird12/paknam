@@ -177,6 +177,11 @@ export const appRoutes: Route[] = [
                             import('app/modules/admin/deduct/page.routes'),
                     },
                     {
+                        path: 'late',
+                        loadChildren: () =>
+                            import('app/modules/admin/late/page.routes'),
+                    },
+                    {
                         path: 'position',
                         loadChildren: () =>
                             import('app/modules/admin/position/page.routes'),

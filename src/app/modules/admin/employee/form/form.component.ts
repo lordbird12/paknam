@@ -100,7 +100,8 @@ export class FormComponent implements OnInit {
             phone: null,
             image: null,
             user_no: [],
-            ot: [],
+            ot: 0,
+            salary: 0,
         });
 
         this.addForm2 = this.formBuilder.group({
@@ -114,7 +115,8 @@ export class FormComponent implements OnInit {
             phone: null,
             image: null,
             user_no: [],
-            ot: [],
+            ot: 0,
+            salary: 0,
         });
     }
 
@@ -135,14 +137,18 @@ export class FormComponent implements OnInit {
             
             this._service.getById(this.Id).subscribe((resp: any)=>{
                 this.itemData = resp.data;
+                
                 this.addForm.patchValue({
                     ...this.itemData,
                     // permission_id: this.itemData.permission_id,
                     department_id: +this.itemData.department_id,
                     position_id: +this.itemData.position_id,
+   
                 })
                 this.addForm2.patchValue({
-                    ...this.itemData
+                    ...this.itemData,
+                    ot: this.itemData.ot ? +this.itemData.ot : 0,
+                    salary: this.itemData.salary ? +this.itemData.salary : 0
                 })
                 this.url_image = this.itemData.image
             })

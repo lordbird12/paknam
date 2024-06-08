@@ -32,7 +32,7 @@ export class PageService {
     /**
      * Constructor
      */
-    constructor(private _httpClient: HttpClient) { }
+    constructor(private _httpClient: HttpClient) {}
 
     httpOptionsFormdata = {
         headers: new HttpHeaders({ Authorization: `Bearer ${token}` }),
@@ -46,9 +46,9 @@ export class PageService {
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
-    create(data: FormData): Observable<any> {
+    create(data: any): Observable<any> {
         return this._httpClient
-            .post<any>(environment.baseURL + '/api/user', data)
+            .post<any>(environment.baseURL + '/api/income', data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -58,7 +58,7 @@ export class PageService {
 
     update(data: any, id: any): Observable<any> {
         return this._httpClient
-            .put<any>(environment.baseURL + '/api/employees/' + id, data)
+            .put<any>(environment.baseURL + '/api/income/' + id, data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -68,40 +68,28 @@ export class PageService {
 
     delete(id: any): Observable<any> {
         return this._httpClient.delete<any>(
-            environment.baseURL + '/api/employees/' + id,
+            environment.baseURL + '/api/income/' + id,
             { headers: this.httpOptionsFormdata.headers }
         );
     }
-    getDepartment(): Observable<any> {
-        return this._httpClient
-            .get<any>(environment.baseURL + '/api/get_department')
-            .pipe(
-                tap((result) => {
-                    this._data.next(result);
-                })
-            );
+
+    getAllMenu(): Observable<any> {
+        return this._httpClient.get(environment.baseURL + '/api/get_menu').pipe(
+            switchMap((response: any) => {
+                return of(response.data);
+            })
+        );
     }
+
     getPosition(): Observable<any> {
         return this._httpClient
-            .get<any>(environment.baseURL + '/api/get_position')
+            .get<any>(environment.baseURL + '/api/positions')
             .pipe(
                 tap((result) => {
                     this._data.next(result);
                 })
             );
     }
-
-    getPayroll(data: any): Observable<any> {
-        return this._httpClient
-            .post<any>('https://demo-olaf.dev-asha.com:2053/report/monthly/json/branches', data)
-            .pipe(
-                tap((result) => {
-                    this._data.next(result);
-                })
-            );
-
-    }
-
     getPermission(): Observable<any> {
         return this._httpClient
             .get<any>(environment.baseURL + '/api/get_permission')
@@ -125,25 +113,12 @@ export class PageService {
     getPage(dataTablesParameters: any): Observable<DataTablesResponse> {
         return this._httpClient
             .post(
-                environment.baseURL + '/api/user_page',
-                dataTablesParameters,
-                this.httpOptionsFormdata
+                environment.baseURL + '/api/income_page',
+                dataTablesParameters
             )
             .pipe(
                 switchMap((response: any) => {
                     return of(response.data);
-                })
-            );
-    }
-
-
-    syncOlaf(data: any): Observable<any> {
-        
-        return this._httpClient
-            .post<any>(environment.baseURL + '/api/time', data, { headers: this.httpOptionsFormdata.headers })
-            .pipe(
-                tap((result) => {
-                    this._data.next(result);
                 })
             );
     }

@@ -49,7 +49,7 @@ export class PageService {
     createIncomePaid(data: any): Observable<any> {
         return this._httpClient
             .post<any>(environment.baseURL + '/api/income_paid', data ,
-            this.httpOptionsFormdata)
+            { headers: this.httpOptionsFormdata.headers })
             .pipe(
                 tap((result) => {
                     this._data.next(result);

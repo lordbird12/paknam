@@ -152,7 +152,13 @@
                     <div class="md:w-full px-3 mb-6 md:mb-0">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                             <mat-label>OT/ชั่วโมง</mat-label>
-                            <input matInput [placeholder]="'โอที'" formControlName="ot">
+                            <input matInput [placeholder]="'โอที'" [formControlName]="'ot'">
+                        </mat-form-field>
+                    </div>
+                    <div class="md:w-full px-3 mb-6 md:mb-0">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>เงินเดือน</mat-label>
+                            <input matInput [placeholder]="'เงินเดือน'" [formControlName]="'salary'">
                         </mat-form-field>
                     </div>
                 </div>
