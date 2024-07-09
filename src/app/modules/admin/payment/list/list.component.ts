@@ -192,6 +192,8 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
 
     showPicture(imgObject: any): void {
+        
+        
         this.dialog
             .open(PictureComponent, {
                 autoFocus: false,
