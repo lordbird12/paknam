@@ -205,6 +205,11 @@ export const appRoutes: Route[] = [
                             import('app/modules/admin/product/page.routes'),
                     },
                     {
+                        path: 'product-attribute',
+                        loadChildren: () =>
+                            import('app/modules/admin/product-attribute/page.routes'),
+                    },
+                    {
                         path: 'customer',
                         loadChildren: () =>
                             import('app/modules/admin/customer/page.routes'),
