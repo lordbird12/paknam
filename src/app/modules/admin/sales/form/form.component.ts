@@ -199,9 +199,8 @@ export class FormComponent implements OnInit {
         this._service.getBrandModel(item).subscribe((resp: any) => {
             this.brandModelData = resp.data
         });
-
     }
-
+    
     selectBrandModel(item: any): void {
         this._service.getProduct(item).subscribe((resp: any) => {
             this.productData = resp.data

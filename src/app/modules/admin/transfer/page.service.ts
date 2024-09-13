@@ -46,9 +46,9 @@ export class PageService {
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
-    create(data: FormData): Observable<any> {
+    create(data: any): Observable<any> {
         return this._httpClient
-            .post<any>(environment.baseURL + '/api/permission', data)
+            .post<any>(environment.baseURL + '/api/transfer', data)
             .pipe(
                 tap((result) => {
                     this._data.next(result);
@@ -120,6 +120,36 @@ export class PageService {
             .pipe(
                 switchMap((response: any) => {
                     return of(response.data);
+                })
+            );
+    }
+
+    getCompany(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_companie')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+
+    getArea(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_area')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
+                })
+            );
+    }
+
+    getProduct(): Observable<any> {
+        return this._httpClient
+            .get<any>(environment.baseURL + '/api/get_area')
+            .pipe(
+                tap((result) => {
+                    this._data.next(result);
                 })
             );
     }
